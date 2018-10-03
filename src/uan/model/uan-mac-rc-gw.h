@@ -177,7 +177,7 @@ private:
   TracedCallback<Time, Time, uint32_t, uint32_t, double, uint32_t, double> m_cycleLogger;
 
   /**
-   * PHY receive ok callback.
+   * PHY recieve ok callback.
    *
    * \param pkt The Packet to receive
    * \param sinr The SINR on the channel

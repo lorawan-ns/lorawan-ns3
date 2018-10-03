@@ -68,25 +68,25 @@ ArpHeader::IsReply (void) const
   return (m_type == ARP_TYPE_REPLY) ? true : false;
 }
 Address 
-ArpHeader::GetSourceHardwareAddress (void) const
+ArpHeader::GetSourceHardwareAddress (void)
 {
   NS_LOG_FUNCTION (this);
   return m_macSource;
 }
 Address 
-ArpHeader::GetDestinationHardwareAddress (void) const
+ArpHeader::GetDestinationHardwareAddress (void)
 {
   NS_LOG_FUNCTION (this);
   return m_macDest;
 }
 Ipv4Address 
-ArpHeader::GetSourceIpv4Address (void) const
+ArpHeader::GetSourceIpv4Address (void)
 {
   NS_LOG_FUNCTION (this);
   return m_ipv4Source;
 }
 Ipv4Address 
-ArpHeader::GetDestinationIpv4Address (void) const
+ArpHeader::GetDestinationIpv4Address (void)
 {
   NS_LOG_FUNCTION (this);
   return m_ipv4Dest;

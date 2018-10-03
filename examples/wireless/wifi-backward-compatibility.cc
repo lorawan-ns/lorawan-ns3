@@ -18,19 +18,11 @@
  * Author: Sebastien Deronne <sebastien.deronne@gmail.com>
  */
 
-#include "ns3/command-line.h"
-#include "ns3/config.h"
-#include "ns3/uinteger.h"
-#include "ns3/log.h"
-#include "ns3/yans-wifi-helper.h"
-#include "ns3/ssid.h"
-#include "ns3/mobility-helper.h"
-#include "ns3/internet-stack-helper.h"
-#include "ns3/ipv4-address-helper.h"
-#include "ns3/udp-client-server-helper.h"
-#include "ns3/packet-sink-helper.h"
-#include "ns3/ipv4-global-routing-helper.h"
-#include "ns3/yans-wifi-channel.h"
+#include "ns3/core-module.h"
+#include "ns3/applications-module.h"
+#include "ns3/wifi-module.h"
+#include "ns3/mobility-module.h"
+#include "ns3/internet-module.h"
 
 // This is an example to show how to configure an IEEE 802.11 Wi-Fi
 // network where the AP and the station use different 802.11 standards.
@@ -214,19 +206,20 @@ int main (int argc, char *argv[])
 
   Simulator::Stop (Seconds (simulationTime + 1));
   Simulator::Run ();
+  Simulator::Destroy ();
 
   uint64_t rxBytes;
   double throughput;
-  bool error = false;
   if (apHasTraffic)
     {
       rxBytes = payloadSize * DynamicCast<UdpServer> (staServerApp.Get (0))->GetReceived ();
       throughput = (rxBytes * 8) / (simulationTime * 1000000.0); //Mbit/s
       std::cout << "AP Throughput: " << throughput << " Mbit/s" << std::endl;
       if (throughput == 0)
-      {
-        error = true;
-      }
+        {
+          NS_LOG_ERROR ("No traffic received!");
+          exit (1);
+        }
     }
   if (staHasTraffic)
     {
@@ -234,18 +227,10 @@ int main (int argc, char *argv[])
       throughput = (rxBytes * 8) / (simulationTime * 1000000.0); //Mbit/s
       std::cout << "STA Throughput: " << throughput << " Mbit/s" << std::endl;
       if (throughput == 0)
-      {
-        error = true;
-      }
+        {
+          NS_LOG_ERROR ("No traffic received!");
+          exit (1);
+        }
     }
-
-  Simulator::Destroy ();
-
-  if (error)
-    {
-      NS_LOG_ERROR ("No traffic received!");
-      exit (1);
-    }
-
   return 0;
 }

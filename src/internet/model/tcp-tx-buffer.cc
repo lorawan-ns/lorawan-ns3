@@ -403,7 +403,7 @@ TcpTxBuffer::GetPacketFromList (PacketList &list, const SequenceNumber32 &listSt
   NS_LOG_FUNCTION (this << numBytes << seq);
 
   /*
-   * Our possibilities are sketched out in the following:
+   * Our possibilites are sketched out in the following:
    *
    *                    |------|     |----|     |----|
    * GetList (m_data) = |      | --> |    | --> |    |
@@ -1452,4 +1452,4 @@ operator<< (std::ostream & os, TcpTxBuffer const & tcpTxBuf)
   return os;
 }
 
-} // namespace ns3
+} // namepsace ns3

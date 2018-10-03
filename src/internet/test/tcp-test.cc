@@ -342,13 +342,9 @@ Ptr<Node>
 TcpTestCase::CreateInternetNode ()
 {
   Ptr<Node> node = CreateObject<Node> ();
-  // Traffic Control
-  Ptr<TrafficControlLayer> tc = CreateObject<TrafficControlLayer> ();
-  node->AggregateObject (tc);
   //ARP
   Ptr<ArpL3Protocol> arp = CreateObject<ArpL3Protocol> ();
   node->AggregateObject (arp);
-  arp->SetTrafficControl (tc);
   //IPV4
   Ptr<Ipv4L3Protocol> ipv4 = CreateObject<Ipv4L3Protocol> ();
   //Routing for Ipv4
@@ -366,6 +362,9 @@ TcpTestCase::CreateInternetNode ()
   //TCP
   Ptr<TcpL4Protocol> tcp = CreateObject<TcpL4Protocol> ();
   node->AggregateObject (tcp);
+  // Traffic Control
+  Ptr<TrafficControlLayer> tc = CreateObject<TrafficControlLayer> ();
+  node->AggregateObject (tc);
   return node;
 }
 

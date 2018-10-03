@@ -165,6 +165,67 @@ public:
   void ResetStatistics (void);
 
   /**
+   * \brief Enumeration of the modes supported in the class.
+   * \deprecated This enum will go away in future versions of ns-3.
+   *
+   */
+  enum QueueMode
+  {
+    QUEUE_MODE_PACKETS,     /**< Use number of packets for maximum queue size */
+    QUEUE_MODE_BYTES,       /**< Use number of bytes for maximum queue size */
+  };
+
+  /**
+   * Set the operating mode of this device.
+   *
+   * \param mode The operating mode of this device.
+   * \deprecated This method will go away in future versions of ns-3.
+   * See instead SetMaxSize()
+   */
+  void SetMode (QueueBase::QueueMode mode);
+
+  /**
+   * Get the operating mode of this device.
+   *
+   * \returns The operating mode of this device.
+   * \deprecated This method will go away in future versions of ns-3.
+   * See instead GetMaxSize()
+   */
+  QueueBase::QueueMode GetMode (void) const;
+
+  /**
+   * \brief Set the maximum amount of packets that can be stored in this queue
+   *
+   * \param maxPackets amount of packets
+   * \deprecated This method will go away in future versions of ns-3.
+   * See instead SetMaxSize()
+   */
+  void SetMaxPackets (uint32_t maxPackets);
+
+  /**
+   * \return the maximum amount of packets that can be stored in this queue
+   * \deprecated This method will go away in future versions of ns-3.
+   * See instead GetMaxSize()
+   */
+  uint32_t GetMaxPackets (void) const;
+
+  /**
+   * \brief Set the maximum amount of bytes that can be stored in this queue
+   *
+   * \param maxBytes amount of bytes
+   * \deprecated This method will go away in future versions of ns-3.
+   * See instead SetMaxSize()
+   */
+  void SetMaxBytes (uint32_t maxBytes);
+
+  /**
+   * \return the maximum amount of bytes that can be stored in this queue
+   * \deprecated This method will go away in future versions of ns-3.
+   * See instead GetMaxSize()
+   */
+  uint32_t GetMaxBytes (void) const;
+
+  /**
    * \brief Set the maximum size of this queue
    *
    * Trying to set a null size has no effect.
@@ -214,6 +275,8 @@ private:
   uint32_t m_nTotalDroppedPacketsBeforeEnqueue; //!< Total dropped packets before enqueue
   uint32_t m_nTotalDroppedPacketsAfterDequeue;  //!< Total dropped packets after dequeue
 
+  uint32_t m_maxPackets;              //!< max packets in the queue
+  uint32_t m_maxBytes;                //!< max bytes in the queue
   QueueSize m_maxSize;                //!< max queue size
 
   /// Friend class
@@ -232,10 +295,7 @@ private:
  * Queue is a template class. The type of the objects stored within the queue
  * is specified by the type parameter, which can be any class providing a
  * GetSize () method (e.g., Packet, QueueDiscItem, etc.). Subclasses need to
- * implement the Enqueue, Dequeue, Remove and Peek methods, and are
- * encouraged to leverage the DoEnqueue, DoDequeue, DoRemove, and DoPeek
- * methods in doing so, to ensure that appropriate trace sources are called
- * and statistics are maintained.
+ * implement the DoEnqueue, DoDequeue, DoRemove and DoPeek methods.
  *
  * Users of the Queue template class usually hold a queue through a smart pointer,
  * hence forward declaration is recommended to avoid pulling the implementation

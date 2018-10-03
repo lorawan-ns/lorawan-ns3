@@ -268,16 +268,17 @@ CsmaChannel::GetNumActDevices (void)
   return numActDevices;
 }
 
-std::size_t
+uint32_t
 CsmaChannel::GetNDevices (void) const
 {
-  return m_deviceList.size ();
+  return (m_deviceList.size ());
 }
 
 Ptr<CsmaNetDevice>
-CsmaChannel::GetCsmaDevice (std::size_t i) const
+CsmaChannel::GetCsmaDevice (uint32_t i) const
 {
-  return m_deviceList[i].devicePtr;
+  Ptr<CsmaNetDevice> netDevice = m_deviceList[i].devicePtr;
+  return netDevice;
 }
 
 int32_t
@@ -335,7 +336,7 @@ CsmaChannel::GetState (void)
 }
 
 Ptr<NetDevice>
-CsmaChannel::GetDevice (std::size_t i) const
+CsmaChannel::GetDevice (uint32_t i) const
 {
   return GetCsmaDevice (i);
 }

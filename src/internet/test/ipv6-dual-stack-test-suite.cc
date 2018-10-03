@@ -120,14 +120,9 @@ CreateDualStackNode ()
 {
   Ptr<Node> node = CreateObject<Node> ();
 
-  // Traffic Control
-  Ptr<TrafficControlLayer> tc = CreateObject<TrafficControlLayer> ();
-  node->AggregateObject (tc);
-
   //ARP
   Ptr<ArpL3Protocol> arp = CreateObject<ArpL3Protocol> ();
   node->AggregateObject (arp);
-  arp->SetTrafficControl (tc);
 
   //IPV4
   Ptr<Ipv4L3Protocol> ipv4 = CreateObject<Ipv4L3Protocol> ();
@@ -167,6 +162,10 @@ CreateDualStackNode ()
   //Ipv6 Extensions
   ipv6->RegisterExtensions ();
   ipv6->RegisterOptions ();
+
+  // Traffic Control
+  Ptr<TrafficControlLayer> tc = CreateObject<TrafficControlLayer> ();
+  node->AggregateObject (tc);
 
   return node;
 }

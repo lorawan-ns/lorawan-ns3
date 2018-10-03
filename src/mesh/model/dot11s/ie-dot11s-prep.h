@@ -98,7 +98,7 @@ public:
   uint32_t GetTtl () const;
   /**
    * Get destination address function
-   * \returns the destination MAC address
+   * \returns the destiantion MAC address
    */
   Mac48Address GetDestinationAddress () const;
   /**

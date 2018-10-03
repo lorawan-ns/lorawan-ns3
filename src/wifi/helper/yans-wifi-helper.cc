@@ -19,13 +19,12 @@
  *          Sébastien Deronne <sebastien.deronne@gmail.com>
  */
 
-#include "ns3/log.h"
-#include "ns3/names.h"
+#include "yans-wifi-helper.h"
 #include "ns3/propagation-loss-model.h"
 #include "ns3/propagation-delay-model.h"
-#include "ns3/error-rate-model.h"
 #include "ns3/yans-wifi-phy.h"
-#include "yans-wifi-helper.h"
+#include "ns3/names.h"
+#include "ns3/log.h"
 
 namespace ns3 {
 

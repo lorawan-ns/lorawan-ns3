@@ -20,7 +20,7 @@
 #include "rng-seed-manager.h"
 #include "global-value.h"
 #include "attribute-helper.h"
-#include "uinteger.h"
+#include "integer.h"
 #include "config.h"
 #include "log.h"
 
@@ -51,8 +51,8 @@ static uint64_t g_nextStreamIndex = 0;
  */
 static ns3::GlobalValue g_rngSeed ("RngSeed", 
                                    "The global seed of all rng streams",
-                                   ns3::UintegerValue(1),
-                                   ns3::MakeUintegerChecker<uint32_t> ());
+                                   ns3::IntegerValue(1),
+                                   ns3::MakeIntegerChecker<uint32_t> ());
 /**
  * \relates RngSeedManager
  * The random number generator substream index.  This is used to generate
@@ -64,36 +64,36 @@ static ns3::GlobalValue g_rngSeed ("RngSeed",
  */
 static ns3::GlobalValue g_rngRun ("RngRun", 
                                   "The substream index used for all streams",
-                                  ns3::UintegerValue (1),
-                                  ns3::MakeUintegerChecker<uint64_t> ());
+                                  ns3::IntegerValue (1),
+                                  ns3::MakeIntegerChecker<int64_t> ());
 
 
 uint32_t RngSeedManager::GetSeed (void)
 {
   NS_LOG_FUNCTION_NOARGS ();
-  UintegerValue seedValue;
+  IntegerValue seedValue;
   g_rngSeed.GetValue (seedValue);
-  return static_cast<uint32_t> (seedValue.Get ());
+  return seedValue.Get ();
 }
 void 
 RngSeedManager::SetSeed (uint32_t seed)
 {
   NS_LOG_FUNCTION (seed);
-  Config::SetGlobal ("RngSeed", UintegerValue(seed));
+  Config::SetGlobal ("RngSeed", IntegerValue(seed));
 }
 
 void RngSeedManager::SetRun (uint64_t run)
 {
   NS_LOG_FUNCTION (run);
-  Config::SetGlobal ("RngRun", UintegerValue (run));
+  Config::SetGlobal ("RngRun", IntegerValue (run));
 }
 
 uint64_t RngSeedManager::GetRun ()
 {
   NS_LOG_FUNCTION_NOARGS ();
-  UintegerValue value;
+  IntegerValue value;
   g_rngRun.GetValue (value);
-  uint64_t run = value.Get();
+  int run = value.Get();
   return run;
 }
 

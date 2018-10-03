@@ -265,15 +265,16 @@ Process Overview
 ################
 
 |ns3| has an automated process to regenerate Python bindings from the C++
-header files.  The process is only supported for Linux at the moment
-(ns-3.29) because we are in the midst of transition to new tools.  The
+header files.  The automated process is only semi-automated at the moment
+(ns-3.27) because we are in the midst of transition to new tools.  The
 current process is outlined below.  In short, the process currently 
 requires the following steps.
 
 1.  Prepare the system for scanning by installing the prerequisites,
     including a development version of ``clang``, the ``CastXML`` package,
     and ``pygccxml``.
-2.  Perform a scan of the module of interest or all modules
+2.  Perform a 64-bit scan of the module or modules of interest
+3.  Create the 32-bit bindings file from the 64-bit scan output
 
 Installing a clang development environment
 ##########################################
@@ -291,7 +292,7 @@ Installing other prerequisites
 
 ``cxxfilt`` is a new requirement, typically installed using ``pip``; e.g.
 
-.. sourcecode:: bash
+::
 
     sudo pip install cxxfilt
 
@@ -300,9 +301,7 @@ See also the wiki for installation notes for your system.
 Set up a ``bake`` build environment
 ###################################
 
-Try the following commands:
-
-.. sourcecode:: bash
+Try the following commands::
 
     $ cd bake
     $ export BAKE_HOME=`pwd`
@@ -314,22 +313,16 @@ Try the following commands:
 Configure
 #########
 
-Perform a configuration at the bake level:
-
-.. sourcecode:: bash
+Perform a configuration at the bake level::
 
     $ ./bake.py configure -e ns-3-dev -e pygccxml-1.9.1
 
 The output of ``bake show`` should show something like this: 
-
-
-.. sourcecode:: bash
+::
 
     $ ./bake.py show
 
-Should say:
-
-.. sourcecode:: text
+Should say::
 
     -- System Dependencies --
      > clang-dev - OK
@@ -341,12 +334,11 @@ Should say:
      > qt - OK
      > setuptools - OK
 
+
 Download
 ########
 
-Try the following command:
-
-.. sourcecode:: bash
+Try the following command::
 
     $ ./bake.py download
      >> Searching for system dependency python-dev - OK
@@ -366,9 +358,7 @@ Try the following command:
 Build
 #####
 
-Try the following commands:
-
-.. sourcecode:: bash
+Try the following commands::
 
     $ mkdir -p build/lib
     $ ./bake.py build
@@ -378,13 +368,13 @@ It should fail on the |ns3| bindings complilation.
 The output of './waf configure' can be inspected to see if Python API scanning
 support is enabled:
 
-.. sourcecode:: text
+::
 
   Python API Scanning Support   : enabled
 
 It may say something like this, if the support is not active:
 
-.. sourcecode:: text
+::
 
   Python API Scanning Support   : not enabled (Missing 'pygccxml' Python module)
 
@@ -392,8 +382,24 @@ In this case, the user must take steps to install castxml and pygccxml;
 castxml binary must be in the shell's path, and pygccxml must be in the
 Python path.
 
-LP64 vs ILP32 bindings
-######################
+Rescan 64-bit
+#############
+
+It is important that you scan the failing module with '--no32bit-scan'; e.g.:
+
+::
+
+    $ cd source/ns-3-dev
+    $ ./waf --apiscan=wifi --no32bit-scan
+
+Generate 32-bit
+###############
+
+Once the 64-bit bindings are fixed, if you are a maintainer and need to
+generate the 32-bit equivalent: 
+
+1. copy the newly scanned LP64.py file(s) to the ILP32.py filename
+2. on the ILP32.py file(s), perform global substitition of ``unsigned long`` with ``unsigned long long``
 
 Linux (64-bit, as most modern installations use) and MacOS use different
 data models, as explained here:  https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.3.0/com.ibm.zos.v2r3.cbcpx01/datatypesize64.htm
@@ -404,33 +410,36 @@ each ns-3 module directory; one with an ILP32.py suffix and one with
 an LP64.py suffix.  Only one is used on any given platform.  The main
 difference is in the representation of the 64 bit integer type as either
 a 'long' (LP64) or 'long long' (ILP32).  
-
-The process (only supported on Linux at present) generates the LP64
-bindings using the toolchain and then copies the LP64 bindings to the
-ILP32 bindings with some type subsitutions automated by Waf scripts.
   
-Rescanning a module
-###################
+As of ns-3.27, the CastXML framework can generate LP64 bindings by passing
+the ``--no32bit-scan`` flag.  However, the framework does not automatically
+generate 32bit scans at the moment.  Instead, users must manually generate
+the ILP32.py equivalents by taking all instances of 'unsigned long' in the
+bindings file and converting them to 'unsigned long long', such as:
 
-To re-scan a module:
+::
 
-.. sourcecode:: bash
+  -    cls.add_instance_attribute('nMarkedBytes', 'std::map< std::string, unsigned long >', is_const=False)
+  +    cls.add_instance_attribute('nMarkedBytes', 'std::map< std::string, unsigned long long >', is_const=False)
 
-    $ cd source/ns-3-dev
-    $ ./waf --apiscan=wifi
+In summary, to generate LP64 bindings for Linux 64-bit systems, it is
+sufficient to call (e.g. for the ``core`` module):
 
-To re-scan all modules:
+::
 
-.. sourcecode:: bash
+  $ ./waf --apiscan=core --no32bit-scan
 
-    $ cd source/ns-3-dev
-    $ ./waf --apiscan=all
+To generate ILP32 bindings, one first must generate the LP64.py file as above,
+and then copy the file to be named with an ILP32.py suffix, and then 
+hand-edit that file, replacing all instances of 'unsigned long' with
+'unsigned long long'.  |ns3| maintainers are working to better automate
+this process for future releases.
 
 Generating bindings on MacOS
 ############################
 
 In principle, this should work (and should generate the 32-bit bindings).
-However, maintainers have not been able to complete this port as of ns-3.29.
+However, it is untested and we are not sure what instructions to offer.
 We would welcome suggestions on how to enable scanning for MacOS. 
 
 Organization of the Modular Python Bindings

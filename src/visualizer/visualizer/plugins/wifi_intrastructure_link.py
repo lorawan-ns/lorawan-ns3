@@ -1,7 +1,7 @@
 import math
 import ns.wifi
 import ns.network
-from gi.repository import GooCanvas
+import goocanvas
 from visualizer.base import Link, transform_distance_canvas_to_simulation
 
 ## WifiLink class
@@ -25,22 +25,21 @@ class WifiLink(Link):
         @param sta The STA node
         @param dev The dev
         """
-        super(WifiLink, self).__init__()
         self.node1 = sta
         self.dev = dev
         self.node2 = None # ap
-        self.canvas_item = GooCanvas.CanvasGroup(parent=parent_canvas_item)
-        self.invisible_line = GooCanvas.CanvasPolyline(parent=self.canvas_item,
+        self.canvas_item = goocanvas.Group(parent=parent_canvas_item)
+        self.invisible_line = goocanvas.Polyline(parent=self.canvas_item,
                                                  line_width=25.0,
-                                                 visibility=GooCanvas.CanvasItemVisibility.HIDDEN)
-        self.visible_line = GooCanvas.CanvasPolyline(parent=self.canvas_item,
+                                                 visibility=goocanvas.ITEM_HIDDEN)
+        self.visible_line = goocanvas.Polyline(parent=self.canvas_item,
                                               line_width=1.0,
                                               stroke_color_rgba=0xC00000FF,
-                                              line_dash=GooCanvas.CanvasLineDash.newv([2.0, 2.0 ]))
-        # self.invisible_line.set_property("pointer-events", (GooCanvas.CanvasPointerEvents.STROKE_MASK
-        #                                             |GooCanvas.CanvasPointerEvents.FILL_MASK
-        #                                             |GooCanvas.CanvasPointerEvents.PAINTED_MASK))
-        self.canvas_item.pyviz_object = self
+                                              line_dash=goocanvas.LineDash([2.0, 2.0 ]))
+        self.invisible_line.props.pointer_events = (goocanvas.EVENTS_STROKE_MASK
+                                                    |goocanvas.EVENTS_FILL_MASK
+                                                    |goocanvas.EVENTS_PAINTED_MASK)
+        self.canvas_item.set_data("pyviz-object", self)
         self.canvas_item.lower(None)
         self.set_ap(None)
 
@@ -56,10 +55,10 @@ class WifiLink(Link):
             self.node2.remove_link(self)
         self.node2 = ap
         if self.node2 is None:
-            self.canvas_item.set_property("visibility", GooCanvas.CanvasItemVisibility.HIDDEN)
+            self.canvas_item.set_property("visibility", goocanvas.ITEM_HIDDEN)
         else:
             self.node2.add_link(self)
-            self.canvas_item.set_property("visibility", GooCanvas.CanvasItemVisibility.VISIBLE)
+            self.canvas_item.set_property("visibility", goocanvas.ITEM_VISIBLE)
         self.update_points()
 
     def update_points(self):
@@ -71,12 +70,10 @@ class WifiLink(Link):
             return
         pos1_x, pos1_y = self.node1.get_position()
         pos2_x, pos2_y = self.node2.get_position()
-        points = GooCanvas.CanvasPoints.new(2)
-        points.set_point(0, pos1_x, pos1_y)
-        points.set_point(1, pos2_x, pos2_y)
+        points = goocanvas.Points([(pos1_x, pos1_y), (pos2_x, pos2_y)])
         self.visible_line.set_property("points", points)
         self.invisible_line.set_property("points", points)
-
+        
     def destroy(self):
         """! Destroy function.
         @param self The object pointer.

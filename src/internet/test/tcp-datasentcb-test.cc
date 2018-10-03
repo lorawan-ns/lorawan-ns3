@@ -20,7 +20,6 @@
 #include "tcp-general-test.h"
 #include "ns3/node.h"
 #include "ns3/log.h"
-#include "ns3/tcp-header.h"
 
 using namespace ns3;
 
@@ -105,7 +104,7 @@ public:
 
   /**
    * Constructor.
-   * \param desc Test description.
+   * \param desc Test desctiption.
    * \param size Packet size.
    * \param packets Number of packets.
    */

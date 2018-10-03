@@ -110,7 +110,7 @@ Ipv4L3ProtocolTestCase::DoRun (void)
   num = interface->GetNAddresses ();
   NS_TEST_ASSERT_MSG_EQ (num, 2, "Should find 2 addresses??");
 
-  /* Test Ipv4Address::RemoveAddress(i, address) */
+  /* Test Ipv4Address::RemoveAddress(i, addresss) */
   bool result = ipv4->RemoveAddress (index, Ipv4Address
 ("192.168.0.2"));
   NS_TEST_ASSERT_MSG_EQ (true, result, "Unable to remove Address??");

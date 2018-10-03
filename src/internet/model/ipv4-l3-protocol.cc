@@ -388,6 +388,7 @@ Ipv4L3Protocol::AddInterface (Ptr<NetDevice> device)
   interface->SetDevice (device);
   interface->SetTrafficControl (tc);
   interface->SetForwarding (m_ipForward);
+  tc->SetupDevice (device);
   return AddIpv4Interface (interface);
 }
 

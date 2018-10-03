@@ -51,14 +51,14 @@ WimaxChannel::Attach (Ptr<WimaxPhy> phy)
   DoAttach (phy);
 }
 
-std::size_t
+uint32_t
 WimaxChannel::GetNDevices (void) const
 {
   return DoGetNDevices ();
 }
 
 Ptr<NetDevice>
-WimaxChannel::GetDevice (std::size_t index) const
+WimaxChannel::GetDevice (uint32_t index) const
 {
   return DoGetDevice (index);
 }

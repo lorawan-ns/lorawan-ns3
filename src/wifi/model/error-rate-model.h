@@ -21,13 +21,10 @@
 #ifndef ERROR_RATE_MODEL_H
 #define ERROR_RATE_MODEL_H
 
+#include "wifi-tx-vector.h"
 #include "ns3/object.h"
 
 namespace ns3 {
-
-class WifiTxVector;
-class WifiMode;
-
 /**
  * \ingroup wifi
  * \brief the interface for Wifi's error models

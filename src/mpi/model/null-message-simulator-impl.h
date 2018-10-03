@@ -148,9 +148,9 @@ private:
   void RescheduleNullMessageEvent (uint32_t nodeSysId);
 
   /**
-   * \param systemId SystemID to compute guarantee time for
+   * \param systemId SystemID to compute guarentee time for
    *
-   * \return Guarantee time
+   * \return Guarentee time
    *
    * Calculate the guarantee time for incoming RemoteChannelBundel
    * from task nodeSysId.  No message should arrive from task

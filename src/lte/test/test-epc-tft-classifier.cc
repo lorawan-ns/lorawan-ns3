@@ -26,7 +26,6 @@
 #include "ns3/ipv4-header.h"
 #include "ns3/udp-header.h"
 #include "ns3/tcp-header.h"
-#include "ns3/ipv4-l3-protocol.h"
 #include "ns3/udp-l4-protocol.h"
 #include "ns3/tcp-l4-protocol.h"
 
@@ -164,7 +163,7 @@ EpcTftClassifierTestCase::DoRun (void)
   udpPacket->AddHeader (m_udpHeader);
   udpPacket->AddHeader (m_ipHeader);
   NS_LOG_LOGIC (this << *udpPacket);
-  uint32_t obtainedTftId = m_c ->Classify (udpPacket, m_d, Ipv4L3Protocol::PROT_NUMBER);
+  uint32_t obtainedTftId = m_c ->Classify (udpPacket, m_d);
   NS_TEST_ASSERT_MSG_EQ (obtainedTftId, (uint16_t) m_tftId, "bad classification of UDP packet");
 }
 

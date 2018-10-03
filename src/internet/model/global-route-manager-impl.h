@@ -864,7 +864,7 @@ private:
   void SPFVertexAddParent (SPFVertex* v);
 
   /**
-   * \brief Search for a link between two vertices.
+   * \brief Search for a link between two vertexes.
    *
    * This method is derived from quagga ospf_get_next_link ()
    *

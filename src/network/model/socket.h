@@ -681,13 +681,9 @@ public:
    * \brief Manually set the socket priority
    *
    * This method corresponds to using setsockopt () SO_PRIORITY of
-   * real network or BSD sockets. On Linux, the socket priority can be
-   * set to a value in the range [0..6], unless the user process has the
-   * CAP_NET_ADMIN capability (see the man page for socket). ns-3 allows
-   * users to set the socket priority to any 8-bit non-negative value,
-   * which is equivalent to assuming that the CAP_NET_ADMIN capability is set.
+   * real network or BSD sockets.
    *
-   * \param priority The socket priority
+   * \param priority The socket priority (in the range 0..6)
    */
   void SetPriority (uint8_t priority);
 

@@ -20,6 +20,7 @@
  */
 
 #include "ampdu-tag.h"
+#include "ns3/uinteger.h"
 
 namespace ns3 {
 

@@ -27,10 +27,8 @@
 #include "ns3/string.h"
 #include "ns3/system-thread.h"
 
-#include <chrono>  // seconds, milliseconds
 #include <ctime>
 #include <list>
-#include <thread>  // sleep_for
 #include <utility>
 
 using namespace ns3;
@@ -67,10 +65,8 @@ private:
 };
 
 ThreadedSimulatorEventsTestCase::ThreadedSimulatorEventsTestCase (ObjectFactory schedulerFactory, const std::string &simulatorType, unsigned int threads)
-  : TestCase ("Check threaded event handling with " +
-              std::to_string (threads) + " threads, " +
-              schedulerFactory.GetTypeId ().GetName () + " scheduler, in " +
-              simulatorType),
+  : TestCase ("Check that threaded event handling is working with " + 
+              schedulerFactory.GetTypeId ().GetName () + " in " + simulatorType),
     m_threads (threads),
     m_schedulerFactory (schedulerFactory),
     m_simulatorType (simulatorType)
@@ -100,7 +96,10 @@ ThreadedSimulatorEventsTestCase::SchedulingThread (std::pair<ThreadedSimulatorEv
                                       &ThreadedSimulatorEventsTestCase::DoNothing, me, threadno);
       while (!me->m_stop && me->m_threadWaiting[threadno])
         {
-          std::this_thread::sleep_for(std::chrono::nanoseconds(500));
+          struct timespec ts;
+          ts.tv_sec = 0;
+          ts.tv_nsec = 500;
+          nanosleep (&ts, NULL);
         }
     }
 }

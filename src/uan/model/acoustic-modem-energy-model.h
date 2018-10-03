@@ -105,7 +105,7 @@ public:
   void SetTxPowerW (double txPowerW);
 
   /**
-   * Get the receiving power.
+   * Get the recieving power.
    *
    * \return The receiving power in Watts
    */

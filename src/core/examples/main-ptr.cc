@@ -19,7 +19,6 @@
 
 #include "ns3/ptr.h"
 #include "ns3/object.h"
-#include "ns3/command-line.h"
 #include <iostream>
 
 /**
@@ -93,9 +92,6 @@ ClearPtr (void)
 
 int main (int argc, char *argv[])
 {
-  CommandLine cmd;
-  cmd.Parse(argc, argv);
-  
   {
     // Create a new object of type PtrExample, store it in global 
     // variable g_ptr

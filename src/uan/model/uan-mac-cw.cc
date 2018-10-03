@@ -139,7 +139,6 @@ UanMacCw::Enqueue (Ptr<Packet> packet, uint16_t protocolNumber, const Address &d
         header.SetDest (Mac8Address::ConvertFrom (dest));
         header.SetSrc (m_address);
         header.SetType (0);
-        header.SetProtocolNumber (0);
         packet->AddHeader (header);
 
         m_enqueueLogger (packet, GetTxModeIndex ());

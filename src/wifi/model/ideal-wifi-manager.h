@@ -56,7 +56,7 @@ public:
 
 
 private:
-  //overridden from base class
+  //overriden from base class
   void DoInitialize (void);
   WifiRemoteStation* DoCreateStation (void) const;
   void DoReportRxOk (WifiRemoteStation *station,
@@ -96,10 +96,10 @@ private:
 
   /**
    * Convenience function for selecting a channel width for legacy mode
-   * \param mode legacy WifiMode
+   * \param mode non-(V)HT WifiMode
    * \return the channel width (MHz) for the selected mode
    */
-  uint16_t GetChannelWidthForMode (WifiMode mode) const;
+  uint8_t GetChannelWidthForMode (WifiMode mode) const;
 
   /**
    * A vector of <snr, WifiTxVector> pair holding the minimum SNR for the

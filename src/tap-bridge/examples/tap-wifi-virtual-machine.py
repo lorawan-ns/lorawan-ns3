@@ -58,7 +58,7 @@ def main(argv):
     wifiMac.SetType ("ns3::AdhocWifiMac");
 
     #
-    # Configure the physical layer.
+    # Configure the physcial layer.
     #
     wifiChannel = ns.wifi.YansWifiChannelHelper.Default()
     wifiPhy = ns.wifi.YansWifiPhyHelper.Default()

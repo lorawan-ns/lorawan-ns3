@@ -39,7 +39,7 @@ namespace ns3 {
 std::string DesMetrics::m_outputDir; // = "";
 
 void 
-DesMetrics::Initialize (std::vector<std::string> args, std::string outDir /* = "" */ )
+DesMetrics::Initialize (int argc, char * argv[], std::string outDir /* = "" */ )
 {
   if (m_initialized)
     {
@@ -50,9 +50,9 @@ DesMetrics::Initialize (std::vector<std::string> args, std::string outDir /* = "
   m_initialized = true;
 
   std::string model_name ("desTraceFile");
-  if (args.size () > 0)
+  if (argc)
     {
-      std::string arg0 = args[0];
+      std::string arg0 = argv[0];
       model_name = SystemPath::Split (arg0).back ();
     }
   std::string jsonFile = model_name + ".json";
@@ -76,12 +76,12 @@ DesMetrics::Initialize (std::vector<std::string> args, std::string outDir /* = "
   m_os << " \"model_name\" : \"" << model_name << "\"," << std::endl;
   m_os << " \"capture_date\" : \"" << capture_date << "\"," << std::endl;
   m_os << " \"command_line_arguments\" : \"";
-  if (args.size () == 0)
+  if (argc)
     {
-      for (std::size_t i = 0; i < args.size (); ++i) 
+      for (int i = 0; i < argc; ++i) 
         {
           if (i > 0) m_os << " ";
-          m_os << args[i];
+          m_os << argv[i];
         }
     }
   else
@@ -106,8 +106,7 @@ DesMetrics::TraceWithContext (uint32_t context, const Time & now, const Time & d
 {
   if (!m_initialized)
     {
-      std::vector<std::string> args;
-      Initialize (args);
+      Initialize (0, 0);
     }
 
   std::ostringstream ss;

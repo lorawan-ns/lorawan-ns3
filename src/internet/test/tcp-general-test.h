@@ -23,7 +23,6 @@
 #include "ns3/error-model.h"
 #include "ns3/tcp-socket-base.h"
 #include "ns3/tcp-congestion-ops.h"
-#include "ns3/tcp-recovery-ops.h"
 #include "ns3/test.h"
 
 namespace ns3 {
@@ -324,18 +323,6 @@ protected:
                                               TypeId congControl);
 
   /**
-   * \brief Create a socket
-   *
-   * \param node associated node
-   * \param socketType Type of the TCP socket
-   * \param congControl congestion control
-   * \param recoveryAlgorithm recovery algorithm
-   * \return a pointer to the newer created socket
-   */
-  virtual Ptr<TcpSocketMsgBase> CreateSocket (Ptr<Node> node, TypeId socketType,
-                                              TypeId congControl, TypeId recoveryAlgorithm);
-
-  /**
    * \brief Get the pointer to a previously created sender socket
    * \return ptr to sender socket or 0
    */
@@ -372,7 +359,7 @@ protected:
   virtual void DoRun (void);
 
   /**
-   * \brief Change the configuration of the environment
+   * \brief Change the configuration of the evironment
    */
   virtual void ConfigureEnvironment (void);
 
@@ -479,7 +466,7 @@ protected:
   Time GetRto (SocketWho who);
 
   /**
-   * \brief Get the minimum RTO attribute
+   * \brief Get the minimun RTO attribute
    *
    * \param who node to get the parameter from
    * \return minimum RTO time
@@ -583,14 +570,6 @@ protected:
   void SetInitialCwnd (SocketWho who, uint32_t initialCwnd);
 
   /**
-   * \brief Forcefully set the ecn mode on
-   *
-   * \param who socket to force
-   * \param ecnMode Mode of ECN. Currently NoEcn and ClassicEcn is supported.
-   */
-  void SetEcn (SocketWho who, TcpSocketBase::EcnMode_t ecnMode);
-
-  /**
    * \brief Forcefully set the initial ssth
    *
    * \param who socket to force
@@ -645,13 +624,6 @@ protected:
   void SetCongestionControl (TypeId congControl) { m_congControlTypeId = congControl; }
 
   /**
-   * \brief recovery algorithm of the sender socket
-   *
-   * \param recovery typeid of the recovery algorithm
-   */
-  void SetRecoveryAlgorithm (TypeId reccovery) { m_recoveryTypeId = reccovery; }
-
-  /**
    * \brief MTU of the bottleneck link
    *
    * \param mtu MTU
@@ -677,18 +649,6 @@ protected:
    * \param newValue new value
    */
   virtual void CWndTrace (uint32_t oldValue, uint32_t newValue)
-  {
-    NS_UNUSED (oldValue);
-    NS_UNUSED (newValue);
-  }
-
-  /**
-   * \brief Tracks the inflated congestion window changes
-   *
-   * \param oldValue old value
-   * \param newValue new value
-   */
-  virtual void CWndInflTrace (uint32_t oldValue, uint32_t newValue)
   {
     NS_UNUSED (oldValue);
     NS_UNUSED (newValue);
@@ -983,7 +943,6 @@ protected:
   }
 
   TypeId   m_congControlTypeId;      //!< Congestion control
-  TypeId   m_recoveryTypeId;         //!< Recovery
 
 private:
   // Member variables, accessible through getters

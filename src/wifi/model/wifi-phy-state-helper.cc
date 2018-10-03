@@ -18,13 +18,12 @@
  * Author: Mathieu Lacage <mathieu.lacage@sophia.inria.fr>
  */
 
-#include <algorithm>
+#include "wifi-phy-state-helper.h"
+#include "wifi-tx-vector.h"
 #include "ns3/log.h"
 #include "ns3/simulator.h"
 #include "ns3/packet.h"
-#include "wifi-phy-state-helper.h"
-#include "wifi-tx-vector.h"
-#include "wifi-phy-listener.h"
+#include <algorithm>
 
 namespace ns3 {
 
@@ -480,7 +479,7 @@ WifiPhyStateHelper::SwitchFromRxEndError (Ptr<Packet> packet, double snr)
   DoSwitchFromRx ();
   if (!m_rxErrorCallback.IsNull ())
     {
-      m_rxErrorCallback ();
+      m_rxErrorCallback (packet, snr);
     }
 }
 

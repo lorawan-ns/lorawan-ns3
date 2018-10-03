@@ -18,24 +18,11 @@
  * Author: Sébastien Deronne <sebastien.deronne@gmail.com>
  */
 
-#include "ns3/command-line.h"
-#include "ns3/config.h"
-#include "ns3/string.h"
-#include "ns3/pointer.h"
-#include "ns3/log.h"
-#include "ns3/yans-wifi-helper.h"
-#include "ns3/ssid.h"
-#include "ns3/mobility-helper.h"
-#include "ns3/internet-stack-helper.h"
-#include "ns3/ipv4-address-helper.h"
-#include "ns3/udp-client-server-helper.h"
-#include "ns3/on-off-helper.h"
-#include "ns3/yans-wifi-channel.h"
-#include "ns3/wifi-net-device.h"
-#include "ns3/qos-txop.h"
-#include "ns3/wifi-mac.h"
-#include "ns3/packet-sink-helper.h"
-#include "ns3/packet-sink.h"
+#include "ns3/core-module.h"
+#include "ns3/applications-module.h"
+#include "ns3/wifi-module.h"
+#include "ns3/mobility-module.h"
+#include "ns3/internet-module.h"
 
 // This example shows how to configure mixed networks (i.e. mixed b/g and HT/non-HT) and how are performance in several scenarios.
 //
@@ -89,7 +76,7 @@ struct Parameters
   bool nGreenfieldHasTraffic;
   bool isUdp;
   uint32_t payloadSize;
-  double simulationTime;
+  uint32_t simulationTime;
 };
 
 class Experiment
@@ -142,7 +129,7 @@ Experiment::Run (Parameters params)
   uint32_t nWifiG = params.nWifiG;
   uint32_t nWifiNNGF = params.nWifiNNonGreenfield;
   uint32_t nWifiNGF = params.nWifiNGreenfield;
-  double simulationTime = params.simulationTime;
+  uint32_t simulationTime = params.simulationTime;
   uint32_t payloadSize = params.payloadSize;
 
   NodeContainer wifiBStaNodes;
@@ -223,8 +210,8 @@ Experiment::Run (Parameters params)
       Ptr<WifiNetDevice> wifi_dev = DynamicCast<WifiNetDevice> (dev);
       Ptr<WifiMac> wifi_mac = wifi_dev->GetMac ();
       PointerValue ptr;
-      wifi_mac->GetAttribute ("BE_Txop", ptr);
-      Ptr<QosTxop> edca = ptr.Get<QosTxop> ();
+      wifi_mac->GetAttribute ("BE_EdcaTxopN", ptr);
+      Ptr<EdcaTxopN> edca = ptr.Get<EdcaTxopN> ();
       edca->SetTxopLimit (MicroSeconds (3008));
     }
   if (nWifiNNGF > 0)
@@ -233,8 +220,8 @@ Experiment::Run (Parameters params)
       Ptr<WifiNetDevice> wifi_dev = DynamicCast<WifiNetDevice> (dev);
       Ptr<WifiMac> wifi_mac = wifi_dev->GetMac ();
       PointerValue ptr;
-      wifi_mac->GetAttribute ("BE_Txop", ptr);
-      Ptr<QosTxop> edca = ptr.Get<QosTxop> ();
+      wifi_mac->GetAttribute ("BE_EdcaTxopN", ptr);
+      Ptr<EdcaTxopN> edca = ptr.Get<EdcaTxopN> ();
       edca->SetTxopLimit (MicroSeconds (3008));
     }
   if (nWifiNGF > 0)
@@ -243,8 +230,8 @@ Experiment::Run (Parameters params)
       Ptr<WifiNetDevice> wifi_dev = DynamicCast<WifiNetDevice> (dev);
       Ptr<WifiMac> wifi_mac = wifi_dev->GetMac ();
       PointerValue ptr;
-      wifi_mac->GetAttribute ("BE_Txop", ptr);
-      Ptr<QosTxop> edca = ptr.Get<QosTxop> ();
+      wifi_mac->GetAttribute ("BE_EdcaTxopN", ptr);
+      Ptr<EdcaTxopN> edca = ptr.Get<EdcaTxopN> ();
       edca->SetTxopLimit (MicroSeconds (3008));
     }
 
@@ -335,6 +322,7 @@ Experiment::Run (Parameters params)
 
       Simulator::Stop (Seconds (simulationTime + 1));
       Simulator::Run ();
+      Simulator::Destroy ();
 
       uint64_t totalPacketsThrough = DynamicCast<UdpServer> (serverApp.Get (0))->GetReceived ();
       throughput = totalPacketsThrough * payloadSize * 8 / (simulationTime * 1000000.0);
@@ -380,11 +368,11 @@ Experiment::Run (Parameters params)
 
       Simulator::Stop (Seconds (simulationTime + 1));
       Simulator::Run ();
+      Simulator::Destroy ();
 
       uint64_t totalPacketsThrough = DynamicCast<PacketSink> (serverApp.Get (0))->GetTotalRx ();
       throughput += totalPacketsThrough * 8 / (simulationTime * 1000000.0);
     }
-  Simulator::Destroy ();
   return throughput;
 }
 

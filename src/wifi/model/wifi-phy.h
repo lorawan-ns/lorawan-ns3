@@ -22,10 +22,15 @@
 #ifndef WIFI_PHY_H
 #define WIFI_PHY_H
 
+#include <map>
 #include "ns3/event-id.h"
-#include "wifi-mpdu-type.h"
+#include "ns3/mobility-model.h"
+#include "ns3/random-variable-stream.h"
+#include "ns3/channel.h"
 #include "wifi-phy-standard.h"
 #include "interference-helper.h"
+#include "ns3/node.h"
+#include "ns3/string.h"
 #include "wifi-phy-state-helper.h"
 
 namespace ns3 {
@@ -34,13 +39,34 @@ namespace ns3 {
 #define VHT_PHY 126
 #define HT_PHY 127
 
-class Channel;
-class NetDevice;
-class MobilityModel;
+/**
+ * WifiPhyStateHelper class
+ */
 class WifiPhyStateHelper;
+
+/**
+ * FrameCaptureModel class
+ */
 class FrameCaptureModel;
+
+/**
+ * WifiRadioEnergyModel class
+ */
 class WifiRadioEnergyModel;
-class UniformRandomVariable;
+
+/**
+ * This enumeration defines the type of an MPDU.
+ */
+/// MpduType enumeration
+enum MpduType
+{
+  /** The MPDU is not part of an A-MPDU */
+  NORMAL_MPDU = 0,
+  /** The MPDU is part of an A-MPDU, but is not the last aggregate */
+  MPDU_IN_AGGREGATE,
+  /** The MPDU is the last aggregate in an A-MPDU */
+  LAST_MPDU_IN_AGGREGATE
+};
 
 /// SignalNoiseDbm structure
 struct SignalNoiseDbm
@@ -126,7 +152,7 @@ public:
   void StartReceivePacket (Ptr<Packet> packet,
                            WifiTxVector txVector,
                            MpduType mpdutype,
-                           Ptr<Event> event);
+                           Ptr<InterferenceHelper::Event> event);
 
   /**
    * The last bit of the packet has arrived.
@@ -136,7 +162,7 @@ public:
    * \param mpdutype the type of the MPDU as defined in WifiPhy::MpduType.
    * \param event the corresponding event of the first time the packet arrives
    */
-  void EndReceive (Ptr<Packet> packet, WifiPreamble preamble, MpduType mpdutype, Ptr<Event> event);
+  void EndReceive (Ptr<Packet> packet, WifiPreamble preamble, MpduType mpdutype, Ptr<InterferenceHelper::Event> event);
 
   /**
    * \param packet the packet to send
@@ -412,6 +438,20 @@ public:
   */
   uint8_t GetBssMembershipSelector (uint8_t selector) const;
   /**
+   * The WifiPhy::GetMembershipSelectorModes() method is used
+   * (e.g., by a WifiRemoteStationManager) to determine the set of
+   * transmission/reception modes that this WifiPhy(-derived class)
+   * can support - a set of WifiMode objects which we call the
+   * BssMembershipSelectorSet, and which is stored as WifiPhy::m_bssMembershipSelectorSet.
+   *
+   * \param selector index in array of supported memberships
+   *
+   * \return a WifiModeList that contains the WifiModes associrated with the selected index.
+   *
+   * \sa WifiPhy::GetMembershipSelectorModes()
+   */
+  WifiModeList GetMembershipSelectorModes (uint32_t selector);
+  /**
    * The WifiPhy::GetNMcs() method is used
    * (e.g., by a WifiRemoteStationManager) to determine the set of
    * transmission/reception MCS indexes that this WifiPhy(-derived class)
@@ -487,7 +527,7 @@ public:
    *
    * \return true if the channel definition succeeded
    */
-  bool DefineChannelNumber (uint8_t channelNumber, WifiPhyStandard standard, uint16_t frequency, uint16_t channelWidth);
+  bool DefineChannelNumber (uint8_t channelNumber, WifiPhyStandard standard, uint16_t frequency, uint8_t channelWidth);
 
   /**
    * A pair of a ChannelNumber and WifiPhyStandard
@@ -496,7 +536,7 @@ public:
   /**
    * A pair of a center Frequency and a ChannelWidth
    */
-  typedef std::pair<uint16_t, uint16_t> FrequencyWidthPair;
+  typedef std::pair<uint16_t, uint8_t> FrequencyWidthPair;
 
   /**
    * Return the Channel this WifiPhy is connected to.
@@ -1188,7 +1228,7 @@ public:
    * The energy of a received signal should be higher than
    * this threshold (dbm) to allow the PHY layer to detect the signal.
    *
-   * \param threshold the energy detection threshold in dBm
+   * \param threshold the energy detction threshold in dBm
    */
   void SetEdThreshold (double threshold);
   /**
@@ -1197,6 +1237,12 @@ public:
    * \return the energy detection threshold in dBm
    */
   double GetEdThreshold (void) const;
+  /**
+   * Return the energy detection threshold.
+   *
+   * \return the energy detection threshold.
+   */
+  double GetEdThresholdW (void) const;
   /**
    * Sets the CCA threshold (dBm). The energy of a received signal
    * should be higher than this threshold to allow the PHY
@@ -1217,6 +1263,12 @@ public:
    * \param noiseFigureDb noise figure in dB
    */
   void SetRxNoiseFigure (double noiseFigureDb);
+  /**
+   * Return the RX noise figure (dBm).
+   *
+   * \return the RX noise figure in dBm
+   */
+  double GetRxNoiseFigure (void) const;
   /**
    * Sets the minimum available transmission power level (dBm).
    *
@@ -1421,11 +1473,25 @@ public:
    */
   void SetErrorRateModel (const Ptr<ErrorRateModel> rate);
   /**
+   * Return the error rate model this PHY is using.
+   *
+   * \return the error rate model this PHY is using
+   */
+  Ptr<ErrorRateModel> GetErrorRateModel (void) const;
+
+  /**
    * Sets the frame capture model.
    *
    * \param frameCaptureModel the frame capture model
    */
   void SetFrameCaptureModel (const Ptr<FrameCaptureModel> frameCaptureModel);
+  /**
+   * Return the frame capture model this PHY is using.
+   *
+   * \return the frame capture model this PHY is using
+   */
+  Ptr<FrameCaptureModel> GetFrameCaptureModel (void) const;
+
   /**
    * Sets the wifi radio energy model.
    *
@@ -1436,19 +1502,19 @@ public:
   /**
    * \return the channel width
    */
-  uint16_t GetChannelWidth (void) const;
+  uint8_t GetChannelWidth (void) const;
   /**
    * \param channelwidth channel width
    */
-  virtual void SetChannelWidth (uint16_t channelwidth);
+  virtual void SetChannelWidth (uint8_t channelwidth);
   /**
    * \param channelwidth channel width (in MHz) to support
    */
-  void AddSupportedChannelWidth (uint16_t channelwidth);
+  void AddSupportedChannelWidth (uint8_t channelwidth);
   /**
    * \return a vector containing the supported channel widths, values in MHz
    */
-  std::vector<uint16_t> GetSupportedChannelWidthSet (void) const;
+  std::vector<uint8_t> GetSupportedChannelWidthSet (void) const;
 
   /**
    * Get the power of the given power level in dBm.
@@ -1593,7 +1659,7 @@ private:
    * \param width The channel width to use
    * \return the channel number if found, zero if not
    */
-  uint8_t FindChannelNumberForFrequencyWidth (uint16_t frequency, uint16_t width) const;
+  uint8_t FindChannelNumberForFrequencyWidth (uint16_t frequency, uint8_t width) const;
   /**
    * Lookup frequency/width pair for channelNumber/standard pair
    * \param channelNumber The channel number to check
@@ -1628,7 +1694,7 @@ private:
                 MpduType mpdutype,
                 double rxPowerW,
                 Time rxDuration,
-                Ptr<Event> event);
+                Ptr<InterferenceHelper::Event> event);
 
   /**
    * The trace source fired when a packet begins the transmission process on
@@ -1746,14 +1812,14 @@ private:
 
   std::vector<uint8_t> m_bssMembershipSelectorSet; //!< the BSS membership selector set
 
-  WifiPhyStandard m_standard;               //!< WifiPhyStandard
-  bool m_isConstructed;                     //!< true when ready to set frequency
-  uint16_t m_channelCenterFrequency;        //!< Center frequency in MHz
-  uint16_t m_initialFrequency;              //!< Store frequency until initialization
+  WifiPhyStandard m_standard;     //!< WifiPhyStandard
+  bool m_isConstructed;                //!< true when ready to set frequency
+  uint16_t m_channelCenterFrequency;   //!< Center frequency in MHz
+  uint16_t m_initialFrequency;         //!< Store frequency until initialization
   bool m_frequencyChannelNumberInitialized; //!< Store initialization state
-  uint16_t m_channelWidth;                  //!< Channel width
+  uint8_t m_channelWidth;             //!< Channel width
 
-  double   m_edThresholdW;        //!< Energy detection threshold in watts
+  double m_edThresholdW;          //!< Energy detection threshold in watts
   double   m_ccaMode1ThresholdW;  //!< Clear channel assessment (CCA) threshold in watts
   double   m_txGainDb;            //!< Transmission gain (dB)
   double   m_rxGainDb;            //!< Reception gain (dB)
@@ -1761,11 +1827,11 @@ private:
   double   m_txPowerEndDbm;       //!< Maximum transmission power (dBm)
   uint8_t  m_nTxPower;            //!< Number of available transmission power levels
 
-  bool     m_ldpc;               //!< Flag if LDPC is used
-  bool     m_stbc;               //!< Flag if STBC is used
-  bool     m_greenfield;         //!< Flag if GreenField format is supported
-  bool     m_shortGuardInterval; //!< Flag if HT/VHT short guard interval is supported
-  bool     m_shortPreamble;      //!< Flag if short PLCP preamble is supported
+  bool     m_ldpc;                  //!< Flag if LDPC is used
+  bool     m_stbc;                  //!< Flag if STBC is used
+  bool     m_greenfield;            //!< Flag if GreenField format is supported
+  bool     m_shortGuardInterval;    //!< Flag if HT/VHT short guard interval is supported
+  bool     m_shortPreamble;         //!< Flag if short PLCP preamble is supported
 
   Time m_guardInterval; //!< Supported HE guard interval
 
@@ -1776,9 +1842,9 @@ private:
   typedef std::map<ChannelNumberStandardPair,FrequencyWidthPair> ChannelToFrequencyWidthMap; //!< channel to frequency width map typedef
   static ChannelToFrequencyWidthMap m_channelToFrequencyWidth; //!< the channel to frequency width map
 
-  std::vector<uint16_t> m_supportedChannelWidthSet; //!< Supported channel width
-  uint8_t               m_channelNumber;            //!< Operating channel number
-  uint8_t               m_initialChannelNumber;     //!< Initial channel number
+  std::vector<uint8_t> m_supportedChannelWidthSet; //!< Supported channel width
+  uint8_t              m_channelNumber;            //!< Operating channel number
+  uint8_t              m_initialChannelNumber;     //!< Initial channel number
 
   Time m_channelSwitchDelay;     //!< Time required to switch between channel
   uint32_t m_totalAmpduSize;     //!< Total size of the previously transmitted MPDUs in an A-MPDU, used for the computation of the number of symbols needed for the last MPDU in the A-MPDU
@@ -1787,7 +1853,7 @@ private:
   Ptr<NetDevice>     m_device;   //!< Pointer to the device
   Ptr<MobilityModel> m_mobility; //!< Pointer to the mobility model
 
-  Ptr<Event> m_currentEvent; //!< Hold the current event
+  Ptr<InterferenceHelper::Event> m_currentEvent; //!< Hold the current event
   Ptr<FrameCaptureModel> m_frameCaptureModel; //!< Frame capture model
   Ptr<WifiRadioEnergyModel> m_wifiRadioEnergyModel; //!< Wifi radio energy model
 

@@ -39,7 +39,6 @@
 #include "ns3/pointer.h"
 #include "ns3tcp-socket-writer.h"
 #include "ns3/tcp-westwood.h"
-#include "ns3/tcp-header.h"
 
 using namespace ns3;
 

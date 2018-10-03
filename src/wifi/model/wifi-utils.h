@@ -21,15 +21,24 @@
 #ifndef WIFI_UTILS_H
 #define WIFI_UTILS_H
 
-#include "block-ack-type.h"
+#include "wifi-mode.h"
+#include "ctrl-headers.h"
+#include "wifi-mac-header.h"
+#include "wifi-mac-trailer.h"
+#include "ns3/nstime.h"
+#include "ns3/uinteger.h"
+#include "ns3/packet.h"
 
 namespace ns3 {
 
-class WifiMacHeader;
-class WifiMode;
-class Packet;
-class Time;
-
+/**
+ * Return the logarithm of the given value to base 2.
+ *
+ * \param val
+ *
+ * \return the logarithm of val to base 2.
+ */
+double Log2 (double val);
 /**
  * Convert from dBm to Watts.
  *

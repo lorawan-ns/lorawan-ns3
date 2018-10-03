@@ -108,9 +108,17 @@ TypeId FqCoDelQueueDisc::GetTypeId (void)
                    StringValue ("5ms"),
                    MakeStringAccessor (&FqCoDelQueueDisc::m_target),
                    MakeStringChecker ())
+    .AddAttribute ("PacketLimit",
+                   "The hard limit on the real queue size, measured in packets",
+                   UintegerValue (10 * 1024),
+                   MakeUintegerAccessor (&FqCoDelQueueDisc::SetLimit,
+                                         &FqCoDelQueueDisc::GetLimit),
+                   MakeUintegerChecker<uint32_t> (),
+                   TypeId::DEPRECATED,
+                   "Use the MaxSize attribute instead")
     .AddAttribute ("MaxSize",
                    "The maximum number of packets accepted by this queue disc",
-                   QueueSizeValue (QueueSize ("10240p")),
+                   QueueSizeValue (QueueSize ("0p")),
                    MakeQueueSizeAccessor (&QueueDisc::SetMaxSize,
                                           &QueueDisc::GetMaxSize),
                    MakeQueueSizeChecker ())
@@ -123,11 +131,6 @@ TypeId FqCoDelQueueDisc::GetTypeId (void)
                    "The maximum number of packets dropped from the fat flow",
                    UintegerValue (64),
                    MakeUintegerAccessor (&FqCoDelQueueDisc::m_dropBatchSize),
-                   MakeUintegerChecker<uint32_t> ())
-    .AddAttribute ("Perturbation",
-                   "The salt used as an additional input to the hash function used to classify packets",
-                   UintegerValue (0),
-                   MakeUintegerAccessor (&FqCoDelQueueDisc::m_perturbation),
                    MakeUintegerChecker<uint32_t> ())
   ;
   return tid;
@@ -163,27 +166,16 @@ FqCoDelQueueDisc::DoEnqueue (Ptr<QueueDiscItem> item)
 {
   NS_LOG_FUNCTION (this << item);
 
-  uint32_t h = 0;
+  int32_t ret = Classify (item);
 
-  if (GetNPacketFilters () == 0)
+  if (ret == PacketFilter::PF_NO_MATCH)
     {
-      h = item->Hash (m_perturbation) % m_flows;
+      NS_LOG_ERROR ("No filter has been able to classify this packet, drop it.");
+      DropBeforeEnqueue (item, UNCLASSIFIED_DROP);
+      return false;
     }
-  else
-    {
-      int32_t ret = Classify (item);
 
-      if (ret != PacketFilter::PF_NO_MATCH)
-        {
-          h = ret % m_flows;
-        }
-      else
-        {
-          NS_LOG_ERROR ("No filter has been able to classify this packet, drop it.");
-          DropBeforeEnqueue (item, UNCLASSIFIED_DROP);
-          return false;
-        }
-    }
+  uint32_t h = ret % m_flows;
 
   Ptr<FqCoDelFlow> flow;
   if (m_flowsIndices.find (h) == m_flowsIndices.end ())
@@ -302,6 +294,28 @@ FqCoDelQueueDisc::DoDequeue (void)
   return item;
 }
 
+Ptr<const QueueDiscItem>
+FqCoDelQueueDisc::DoPeek (void)
+{
+  NS_LOG_FUNCTION (this);
+
+  return PeekDequeued ();
+}
+
+void
+FqCoDelQueueDisc::SetLimit (uint32_t limit)
+{
+  NS_LOG_FUNCTION (this << limit);
+  SetMaxSize (QueueSize (QueueSizeUnit::PACKETS, limit));
+}
+
+uint32_t
+FqCoDelQueueDisc::GetLimit (void) const
+{
+  NS_LOG_FUNCTION (this);
+  return GetMaxSize ().GetValue ();
+}
+
 bool
 FqCoDelQueueDisc::CheckConfig (void)
 {
@@ -312,31 +326,16 @@ FqCoDelQueueDisc::CheckConfig (void)
       return false;
     }
 
+  if (GetNPacketFilters () == 0)
+    {
+      NS_LOG_ERROR ("FqCoDelQueueDisc needs at least a packet filter");
+      return false;
+    }
+
   if (GetNInternalQueues () > 0)
     {
       NS_LOG_ERROR ("FqCoDelQueueDisc cannot have internal queues");
       return false;
-    }
-
-  // we are at initialization time. If the user has not set a quantum value,
-  // set the quantum to the MTU of the device (if any)
-  if (!m_quantum)
-    {
-      Ptr<NetDeviceQueueInterface> ndqi = GetNetDeviceQueueInterface ();
-      Ptr<NetDevice> dev;
-      // if the NetDeviceQueueInterface object is aggregated to a
-      // NetDevice, get the MTU of such NetDevice
-      if (ndqi && (dev = ndqi->GetObject<NetDevice> ()))
-        {
-          m_quantum = dev->GetMtu ();
-          NS_LOG_DEBUG ("Setting the quantum to the MTU of the device: " << m_quantum);
-        }
-
-      if (!m_quantum)
-        {
-          NS_LOG_ERROR ("The quantum parameter cannot be null");
-          return false;
-        }
     }
 
   return true;
@@ -346,6 +345,16 @@ void
 FqCoDelQueueDisc::InitializeParams (void)
 {
   NS_LOG_FUNCTION (this);
+
+  // we are at initialization time. If the user has not set a quantum value,
+  // set the quantum to the MTU of the device
+  if (!m_quantum)
+    {
+      Ptr<NetDevice> device = GetNetDevice ();
+      NS_ASSERT_MSG (device, "Device not set for the queue disc");
+      m_quantum = device->GetMtu ();
+      NS_LOG_DEBUG ("Setting the quantum to the MTU of the device: " << m_quantum);
+    }
 
   m_flowFactory.SetTypeId ("ns3::FqCoDelFlow");
 

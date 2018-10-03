@@ -27,10 +27,9 @@
 #include "ns3/attribute.h"
 #include "ns3/attribute-helper.h"
 #include "ns3/address.h"
+#include "ns3/wifi-mac.h"
 
 namespace ns3 {
-
-class WifiMac;
 class VendorSpecificContentManager;
 
 /**
@@ -190,7 +189,7 @@ private:
 /**
  * \param mac a pointer to the mac object which is calling this callback
  * \param oi the organization identifier of vendor specific action frame
- * \param packet the vendor specific content packet received
+ * \param packet the vendor specifc content packet received
  * \param sender the address of the sender
  * \returns true if the callback could handle the packet successfully;
  *       false otherwise.

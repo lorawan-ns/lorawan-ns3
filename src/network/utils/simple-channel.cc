@@ -84,7 +84,7 @@ SimpleChannel::Add (Ptr<SimpleNetDevice> device)
   m_devices.push_back (device);
 }
 
-std::size_t
+uint32_t
 SimpleChannel::GetNDevices (void) const
 {
   NS_LOG_FUNCTION (this);
@@ -92,7 +92,7 @@ SimpleChannel::GetNDevices (void) const
 }
 
 Ptr<NetDevice>
-SimpleChannel::GetDevice (std::size_t i) const
+SimpleChannel::GetDevice (uint32_t i) const
 {
   NS_LOG_FUNCTION (this << i);
   return m_devices[i];

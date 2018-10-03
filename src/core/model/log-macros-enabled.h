@@ -231,7 +231,7 @@
 /**
  * \ingroup logging
  *
- * Output the requested message unconditionally.
+ * Output the requested message unconditionaly.
  *
  * \param [in] msg The message to log
  */

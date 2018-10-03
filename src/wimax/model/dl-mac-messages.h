@@ -68,7 +68,7 @@ public:
    */
   uint16_t GetEirxPIrMax (void) const;
   /**
-   * Get frequency function
+   * Get frequency functon
    * \returns the frequency
    */
   uint32_t GetFrequency (void) const;
@@ -222,6 +222,7 @@ private:
   uint8_t m_ttg; ///< TTG
   uint8_t m_rtg; ///< RTG
 
+  uint32_t m_chnlSwitchFrameNr; ///< channel switch frame number
   Mac48Address m_baseStationId; ///< base station ID
   uint8_t m_frameDurationCode; ///< frame duration code
   uint32_t m_frameNumber; ///< frame number
@@ -296,7 +297,7 @@ public:
   void SetFecCodeType (uint8_t fecCodeType);
 
   /**
-   * Get type function
+   * Get type functon
    * \returns the type
    */
   uint8_t GetType (void) const;
@@ -450,7 +451,7 @@ public:
   ~OfdmDlMapIe (void);
 
   /**
-   * Set CID function
+   * Set CID functon
    * \param cid the CID
    */
   void SetCid (Cid cid);

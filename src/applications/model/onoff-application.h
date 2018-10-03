@@ -167,9 +167,6 @@ private:
   /// Traced Callback: transmitted packets.
   TracedCallback<Ptr<const Packet> > m_txTrace;
 
-  /// Callbacks for tracing the packet Tx events, includes source and destination addresses
-  TracedCallback<Ptr<const Packet>, const Address &, const Address &> m_txTraceWithAddresses;
-
 private:
   /**
    * \brief Schedule the next packet transmission

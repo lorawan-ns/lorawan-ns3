@@ -124,14 +124,14 @@ UanChannel::SetPropagationModel (Ptr<UanPropModel> prop)
   m_prop = prop;
 }
 
-std::size_t
+uint32_t
 UanChannel::GetNDevices () const
 {
-  return m_devList.size ();
+  return static_cast<uint32_t> (m_devList.size ());
 }
 
 Ptr<NetDevice>
-UanChannel::GetDevice (std::size_t i) const
+UanChannel::GetDevice (uint32_t i) const
 {
   return m_devList[i].first;
 }
