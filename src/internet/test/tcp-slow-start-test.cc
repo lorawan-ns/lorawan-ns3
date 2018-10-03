@@ -22,7 +22,6 @@
 #include "ns3/node.h"
 #include "ns3/config.h"
 #include "ns3/tcp-westwood.h"
-#include "ns3/tcp-header.h"
 #include "tcp-general-test.h"
 
 using namespace ns3;

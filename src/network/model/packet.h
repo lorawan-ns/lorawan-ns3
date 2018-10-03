@@ -701,16 +701,6 @@ public:
   typedef void (* AddressTracedCallback)
     (Ptr<const Packet> packet, const Address &address);
   
-   /**
-    * TracedCallback signature for packet and source/destination addresses.
-    *
-    * \param [in] packet The packet.
-    * \param [in] srcAddress The source address.
-    * \param [in] destAddress The destination address.
-    */
-  typedef void (* TwoAddressTracedCallback)
-    (const Ptr<const Packet> packet, const Address &srcAddress, const Address &destAddress);
-
   /**
    * TracedCallback signature for packet and Mac48Address.
    *

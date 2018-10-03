@@ -532,7 +532,7 @@ public:
   /**
    * Read item
    * \param start the iterator
-   * \returns the updated iterator
+   * \returns the udpated iterator
    */
   Buffer::Iterator Read (Buffer::Iterator start);
 private:

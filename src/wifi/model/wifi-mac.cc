@@ -18,11 +18,8 @@
  * Author: Mathieu Lacage <mathieu.lacage@sophia.inria.fr>
  */
 
-#include "ns3/log.h"
-#include "ns3/packet.h"
 #include "wifi-mac.h"
-#include "txop.h"
-#include "ssid.h"
+#include "ns3/log.h"
 
 namespace ns3 {
 
@@ -120,6 +117,32 @@ WifiMac::GetDefaultCompressedBlockAckTimeout (void)
   return blockAckTimeout;
 }
 
+void
+WifiMac::SetBasicBlockAckTimeout (Time blockAckTimeout)
+{
+  //this method must be implemented by QoS WifiMacs
+}
+
+Time
+WifiMac::GetBasicBlockAckTimeout (void) const
+{
+  //this method must be implemented by QoS WifiMacs
+  return MicroSeconds (0);
+}
+
+void
+WifiMac::SetCompressedBlockAckTimeout (Time blockAckTimeout)
+{
+  //this methos must be implemented by QoS WifiMacs
+}
+
+Time
+WifiMac::GetCompressedBlockAckTimeout (void) const
+{
+  //this method must be implemented by QoS WifiMacs
+  return MicroSeconds (0);
+}
+
 TypeId
 WifiMac::GetTypeId (void)
 {
@@ -173,7 +196,7 @@ WifiMac::GetTypeId (void)
                    MakeTimeChecker ())
     .AddAttribute ("MaxPropagationDelay", "The maximum propagation delay. Unused for now.",
                    TimeValue (GetDefaultMaxPropagationDelay ()),
-                   MakeTimeAccessor (&WifiMac::SetMaxPropagationDelay),
+                   MakeTimeAccessor (&WifiMac::m_maxPropagationDelay),
                    MakeTimeChecker ())
     .AddAttribute ("Ssid", "The ssid we want to belong to.",
                    SsidValue (Ssid ("default")),
@@ -203,6 +226,12 @@ WifiMac::GetTypeId (void)
                      "A packet has been dropped in the MAC layer after it has been passed up from the physical layer.",
                      MakeTraceSourceAccessor (&WifiMac::m_macRxDropTrace),
                      "ns3::Packet::TracedCallback")
+    //Not currently implemented in this device
+    /*
+    .AddTraceSource ("Sniffer",
+                     "Trace source simulating a non-promiscuous packet sniffer attached to the device",
+                     MakeTraceSourceAccessor (&WifiMac::m_snifferTrace))
+    */
   ;
   return tid;
 }
@@ -212,6 +241,18 @@ WifiMac::SetMaxPropagationDelay (Time delay)
 {
   NS_LOG_FUNCTION (this << delay);
   m_maxPropagationDelay = delay;
+}
+
+Time
+WifiMac::GetMsduLifetime (void) const
+{
+  return Seconds (10);
+}
+
+Time
+WifiMac::GetMaxPropagationDelay (void) const
+{
+  return m_maxPropagationDelay;
 }
 
 void
@@ -396,7 +437,7 @@ WifiMac::Configure80211ax_5Ghz (void)
 }
 
 void
-WifiMac::ConfigureDcf (Ptr<Txop> dcf, uint32_t cwmin, uint32_t cwmax, bool isDsss, AcIndex ac)
+WifiMac::ConfigureDcf (Ptr<DcaTxop> dcf, uint32_t cwmin, uint32_t cwmax, bool isDsss, AcIndex ac)
 {
   NS_LOG_FUNCTION (this << dcf << cwmin << cwmax << isDsss << ac);
   /* see IEE802.11 section 7.3.2.29 */

@@ -32,7 +32,7 @@
 
 namespace ns3 {
 
-NS_LOG_COMPONENT_DEFINE ("SystemWallClockMs");
+NS_LOG_COMPONENT_DEFINE ("SystemWallClockMsPrivate");
 
 /**
  * \ingroup system

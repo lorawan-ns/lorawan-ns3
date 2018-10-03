@@ -173,7 +173,7 @@ public:
   void SetChecksum (uint16_t checksum);
 
   /**
-   * \brief Print information.
+   * \brief Print informations.
    * \param os output stream
    */
   virtual void Print (std::ostream& os) const;
@@ -285,7 +285,7 @@ public:
   void SetLength (uint8_t len);
 
   /**
-   * \brief Print information.
+   * \brief Print informations.
    * \param os output stream
    */
   virtual void Print (std::ostream& os) const;
@@ -382,7 +382,7 @@ public:
   void SetIpv6Target (Ipv6Address target);
 
   /**
-   * \brief Print information.
+   * \brief Print informations.
    * \param os output stream
    */
   virtual void Print (std::ostream& os) const;
@@ -510,7 +510,7 @@ public:
   void SetFlagO (bool o);
 
   /**
-   * \brief Print information.
+   * \brief Print informations.
    * \param os output stream
    */
   virtual void Print (std::ostream& os) const;
@@ -676,7 +676,7 @@ public:
   void SetFlagH (bool h);
 
   /**
-   * \brief Print information.
+   * \brief Print informations.
    * \param os output stream
    */
   virtual void Print (std::ostream& os) const;
@@ -797,7 +797,7 @@ public:
   void SetReserved (uint32_t reserved);
 
   /**
-   * \brief Print information.
+   * \brief Print informations.
    * \param os output stream
    */
   virtual void Print (std::ostream& os) const;
@@ -883,7 +883,7 @@ public:
   void SetDestination (Ipv6Address destination);
 
   /**
-   * \brief Print information.
+   * \brief Print informations.
    * \param os output stream
    */
   virtual void Print (std::ostream& os) const;
@@ -997,7 +997,7 @@ public:
   void SetSeq (uint16_t seq);
 
   /**
-   * \brief Print information.
+   * \brief Print informations.
    * \param os output stream
    */
   virtual void Print (std::ostream& os) const;
@@ -1076,7 +1076,7 @@ public:
   void SetPacket (Ptr<Packet> p);
 
   /**
-   * \brief Print information.
+   * \brief Print informations.
    * \param os output stream
    */
   virtual void Print (std::ostream& os) const;
@@ -1162,7 +1162,7 @@ public:
   void SetMtu (uint32_t mtu);
 
   /**
-   * \brief Print information.
+   * \brief Print informations.
    * \param os output stream
    */
   virtual void Print (std::ostream& os) const;
@@ -1242,7 +1242,7 @@ public:
   void SetPacket (Ptr<Packet> p);
 
   /**
-   * \brief Print information.
+   * \brief Print informations.
    * \param os output stream
    */
   virtual void Print (std::ostream& os) const;
@@ -1329,7 +1329,7 @@ public:
   void SetPtr (uint32_t ptr);
 
   /**
-   * \brief Print information.
+   * \brief Print informations.
    * \param os output stream
    */
   virtual void Print (std::ostream& os) const;
@@ -1427,7 +1427,7 @@ public:
   void SetMtu (uint32_t mtu);
 
   /**
-   * \brief Print information.
+   * \brief Print informations.
    * \param os output stream
    */
   virtual void Print (std::ostream& os) const;
@@ -1573,7 +1573,7 @@ public:
   void SetPrefix (Ipv6Address prefix);
 
   /**
-   * \brief Print information.
+   * \brief Print informations.
    * \param os output stream
    */
   virtual void Print (std::ostream& os) const;
@@ -1685,7 +1685,7 @@ public:
   void SetAddress (Address addr);
 
   /**
-   * \brief Print information.
+   * \brief Print informations.
    * \param os output stream
    */
   virtual void Print (std::ostream& os) const;
@@ -1759,7 +1759,7 @@ public:
   void SetPacket (Ptr<Packet> packet);
 
   /**
-   * \brief Print information.
+   * \brief Print informations.
    * \param os output stream
    */
   virtual void Print (std::ostream& os) const;

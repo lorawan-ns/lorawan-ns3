@@ -358,7 +358,7 @@ public:
     * \param [in] Pointer to UE RRC
     * \param [in] List of LteRrcSap::SCellToAddMod
     */
-  typedef void (* SCarrierConfiguredTracedCallback)
+  typedef void (* SCarrierConfiguredCallback)
     (Ptr<LteUeRrc>, std::list<LteRrcSap::SCellToAddMod>);
 
 
@@ -486,9 +486,9 @@ private:
 
   /**
    * RRC CCM SAP USER Method
-   * \param noOfComponentCarriers the number of component carriers
+   * \param res
    */
-  void DoSetNumberOfComponentCarriers (uint16_t noOfComponentCarriers);
+  void DoComponentCarrierEnabling (std::vector<uint8_t> res);
 
  
   // INTERNAL METHODS
@@ -679,12 +679,12 @@ private:
   void SendMeasurementReport (uint8_t measId);
 
   /**
-   * Apply radio resource config dedicated.
+   * Apply radio resoure config dedicated.
    * \param rrcd LteRrcSap::RadioResourceConfigDedicated
    */
   void ApplyRadioResourceConfigDedicated (LteRrcSap::RadioResourceConfigDedicated rrcd);
   /**
-   * Apply radio resource config dedicated secondary carrier.
+   * Apply radio resoure config dedicated secondary carrier.
    * \param nonCec LteRrcSap::NonCriticalExtensionConfiguration
    */
   void ApplyRadioResourceConfigDedicatedSecondaryCarrier (LteRrcSap::NonCriticalExtensionConfiguration nonCec);
@@ -1027,7 +1027,7 @@ private:
    * applied to the measurement results and they are used by *UE measurements*
    * function:
    * - LteUeRrc::MeasurementReportTriggering: in this case it is not set any
-   *   measurement related to seconday carrier components since the 
+   *   measurment related to seconday carrier components since the 
    *   A6 event is not implemented
    * - LteUeRrc::SendMeasurementReport: in this case the report are sent.
    */

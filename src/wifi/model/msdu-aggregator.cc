@@ -19,9 +19,8 @@
  */
 
 #include "ns3/log.h"
-#include "ns3/packet.h"
+#include "ns3/uinteger.h"
 #include "msdu-aggregator.h"
-#include "amsdu-subframe-header.h"
 
 namespace ns3 {
 
@@ -71,7 +70,7 @@ MsduAggregator::Aggregate (Ptr<const Packet> packet, Ptr<Packet> aggregatedPacke
   uint8_t padding = CalculatePadding (aggregatedPacket);
   uint32_t actualSize = aggregatedPacket->GetSize ();
 
-  if ((14 + packet->GetSize () + actualSize + padding) <= GetMaxAmsduSize ())
+  if ((14 + packet->GetSize () + actualSize + padding) <= m_maxAmsduLength)
     {
       if (padding)
         {
@@ -80,7 +79,7 @@ MsduAggregator::Aggregate (Ptr<const Packet> packet, Ptr<Packet> aggregatedPacke
         }
       currentHdr.SetDestinationAddr (dest);
       currentHdr.SetSourceAddr (src);
-      currentHdr.SetLength (static_cast<uint16_t> (packet->GetSize ()));
+      currentHdr.SetLength (packet->GetSize ());
       currentPacket = packet->Copy ();
 
       currentPacket->AddHeader (currentHdr);

@@ -21,7 +21,6 @@
 
 #include "tcp-ledbat.h"
 #include "ns3/log.h"
-#include "ns3/simulator.h"
 
 namespace ns3 {
 
@@ -61,11 +60,6 @@ TcpLedbat::GetTypeId (void)
                    MakeEnumAccessor (&TcpLedbat::SetDoSs),
                    MakeEnumChecker (DO_SLOWSTART, "yes",
                                     DO_NOT_SLOWSTART, "no"))
-    .AddAttribute ("MinCwnd",
-                   "Minimum cWnd for Ledbat",
-                   UintegerValue (2),
-                   MakeUintegerAccessor (&TcpLedbat::m_minCwnd),
-                   MakeUintegerChecker<uint32_t> ())
   ;
   return tid;
 }
@@ -98,8 +92,7 @@ TcpLedbat::TcpLedbat (void)
   m_lastRollover = 0;
   m_sndCwndCnt = 0;
   m_flag = LEDBAT_CAN_SS;
-  m_minCwnd = 2;
-};
+}
 
 void TcpLedbat::InitCircBuf (struct OwdCircBuf &buffer)
 {
@@ -122,7 +115,6 @@ TcpLedbat::TcpLedbat (const TcpLedbat& sock)
   m_lastRollover = sock.m_lastRollover;
   m_sndCwndCnt = sock.m_sndCwndCnt;
   m_flag = sock.m_flag;
-  m_minCwnd = sock.m_minCwnd;
 }
 
 TcpLedbat::~TcpLedbat (void)
@@ -217,7 +209,7 @@ void TcpLedbat::CongestionAvoidance (Ptr<TcpSocketState> tcb, uint32_t segmentsA
 
   max_cwnd = static_cast<uint32_t>(tcb->m_highTxMark.Get () - tcb->m_lastAckedSeq) + segmentsAcked * tcb->m_segmentSize;
   cwnd = std::min (cwnd, max_cwnd);
-  cwnd = std::max (cwnd, m_minCwnd * tcb->m_segmentSize);
+  cwnd = std::max (cwnd, tcb->m_segmentSize);
   tcb->m_cWnd = cwnd;
 
   if (tcb->m_cWnd <= tcb->m_ssThresh)

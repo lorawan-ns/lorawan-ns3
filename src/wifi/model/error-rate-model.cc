@@ -19,7 +19,6 @@
  */
 
 #include "error-rate-model.h"
-#include "ns3/wifi-tx-vector.h"
 
 namespace ns3 {
 

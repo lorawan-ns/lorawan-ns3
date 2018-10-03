@@ -28,11 +28,6 @@
 #include "ns3/tcp-l4-protocol.h"
 #include "../model/ipv4-end-point.h"
 #include "../model/ipv6-end-point.h"
-#include "ns3/tcp-header.h"
-#include "ns3/tcp-tx-buffer.h"
-#include "ns3/tcp-rx-buffer.h"
-#include "ns3/rtt-estimator.h"
-
 #include "tcp-general-test.h"
 
 using namespace ns3;
@@ -42,7 +37,6 @@ NS_LOG_COMPONENT_DEFINE ("TcpGeneralTest");
 TcpGeneralTest::TcpGeneralTest (const std::string &desc)
   : TestCase (desc),
     m_congControlTypeId (TcpNewReno::GetTypeId ()),
-    m_recoveryTypeId (TcpClassicRecovery::GetTypeId ()),
     m_remoteAddr (Ipv4Address::GetAny (), 4477)
 {
   NS_LOG_FUNCTION (this << desc);
@@ -102,7 +96,6 @@ TcpGeneralTest::ConfigureEnvironment ()
   NS_LOG_FUNCTION (this);
 
   SetCongestionControl (m_congControlTypeId);
-  SetRecoveryAlgorithm (m_recoveryTypeId);
   SetPropagationDelay (MilliSeconds (500));
   SetTransmitStart (Seconds (10));
   SetAppPktSize (500);
@@ -204,8 +197,6 @@ TcpGeneralTest::DoRun (void)
   m_senderSocket->SetUpdateRttHistoryCb (MakeCallback (&TcpGeneralTest::UpdateRttHistoryCb, this));
   m_senderSocket->TraceConnectWithoutContext ("CongestionWindow",
                                               MakeCallback (&TcpGeneralTest::CWndTrace, this));
-  m_senderSocket->TraceConnectWithoutContext ("CongestionWindowInflated",
-                                              MakeCallback (&TcpGeneralTest::CWndInflTrace, this));
   m_senderSocket->TraceConnectWithoutContext ("SlowStartThreshold",
                                               MakeCallback (&TcpGeneralTest::SsThreshTrace, this));
   m_senderSocket->TraceConnectWithoutContext ("CongState",
@@ -274,33 +265,23 @@ Ptr<TcpSocketMsgBase>
 TcpGeneralTest::CreateSocket (Ptr<Node> node, TypeId socketType,
                               TypeId congControl)
 {
-  return CreateSocket (node, socketType, congControl, m_recoveryTypeId);
-}
-
-Ptr<TcpSocketMsgBase>
-TcpGeneralTest::CreateSocket (Ptr<Node> node, TypeId socketType,
-                              TypeId congControl, TypeId recoveryAlgorithm)
-{
   ObjectFactory rttFactory;
   ObjectFactory congestionAlgorithmFactory;
-  ObjectFactory recoveryAlgorithmFactory;
   ObjectFactory socketFactory;
 
   rttFactory.SetTypeId (RttMeanDeviation::GetTypeId ());
   congestionAlgorithmFactory.SetTypeId (congControl);
-  recoveryAlgorithmFactory.SetTypeId (recoveryAlgorithm);
   socketFactory.SetTypeId (socketType);
 
   Ptr<RttEstimator> rtt = rttFactory.Create<RttEstimator> ();
   Ptr<TcpSocketMsgBase> socket = DynamicCast<TcpSocketMsgBase> (socketFactory.Create ());
   Ptr<TcpCongestionOps> algo = congestionAlgorithmFactory.Create<TcpCongestionOps> ();
-  Ptr<TcpRecoveryOps> recovery = recoveryAlgorithmFactory.Create<TcpRecoveryOps> ();
 
   socket->SetNode (node);
   socket->SetTcp (node->GetObject<TcpL4Protocol> ());
   socket->SetRtt (rtt);
   socket->SetCongestionControlAlgorithm (algo);
-  socket->SetRecoveryAlgorithm (recovery);
+
   return socket;
 }
 
@@ -319,13 +300,13 @@ TcpGeneralTest::CreateReceiverErrorModel ()
 Ptr<TcpSocketMsgBase>
 TcpGeneralTest::CreateSenderSocket (Ptr<Node> node)
 {
-  return CreateSocket (node, TcpSocketMsgBase::GetTypeId (), m_congControlTypeId, m_recoveryTypeId);
+  return CreateSocket (node, TcpSocketMsgBase::GetTypeId (), m_congControlTypeId);
 }
 
 Ptr<TcpSocketMsgBase>
 TcpGeneralTest::CreateReceiverSocket (Ptr<Node> node)
 {
-  return CreateSocket (node, TcpSocketMsgBase::GetTypeId (), m_congControlTypeId, m_recoveryTypeId);
+  return CreateSocket (node, TcpSocketMsgBase::GetTypeId (), m_congControlTypeId);
 }
 
 void
@@ -923,22 +904,6 @@ TcpGeneralTest::SetInitialCwnd (SocketWho who, uint32_t initialCwnd)
   else if (who == RECEIVER)
     {
       m_receiverSocket->SetInitialCwnd (initialCwnd);
-    }
-  else
-    {
-      NS_FATAL_ERROR ("Not defined");
-    }
-}
-void
-TcpGeneralTest::SetEcn (SocketWho who, TcpSocketBase::EcnMode_t ecnMode)
-{
-  if (who == SENDER)
-    {
-      m_senderSocket->SetEcn (ecnMode);
-    }
-   else if (who == RECEIVER)
-   {
-      m_receiverSocket->SetEcn (ecnMode);
     }
   else
     {

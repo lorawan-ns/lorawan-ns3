@@ -59,12 +59,6 @@ CapabilityInformation::SetShortSlotTime (bool shortSlotTime)
     }
 }
 
-void
-CapabilityInformation::SetCfPollable (void)
-{
-  Set (2);
-}
-
 bool
 CapabilityInformation::IsEss (void) const
 {
@@ -87,12 +81,6 @@ bool
 CapabilityInformation::IsShortSlotTime (void) const
 {
   return Is (10);
-}
-
-bool
-CapabilityInformation::IsCfPollable (void) const
-{
-  return Is (2);
 }
 
 void

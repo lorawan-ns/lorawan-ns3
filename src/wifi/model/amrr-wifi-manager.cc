@@ -18,10 +18,11 @@
  * Author: Mathieu Lacage <mathieu.lacage@sophia.inria.fr>
  */
 
-#include "ns3/log.h"
-#include "ns3/simulator.h"
 #include "amrr-wifi-manager.h"
-#include "wifi-tx-vector.h"
+#include "ns3/simulator.h"
+#include "ns3/log.h"
+#include "ns3/uinteger.h"
+#include "ns3/double.h"
 
 #define Min(a,b) ((a < b) ? a : b)
 
@@ -345,7 +346,7 @@ AmrrWifiManager::DoGetDataTxVector (WifiRemoteStation *st)
           rateIndex = station->m_txrate;
         }
     }
-  uint16_t channelWidth = GetChannelWidth (station);
+  uint8_t channelWidth = GetChannelWidth (station);
   if (channelWidth > 20 && channelWidth != 22)
     {
       //avoid to use legacy rate adaptation algorithms for IEEE 802.11n/ac
@@ -365,7 +366,7 @@ AmrrWifiManager::DoGetRtsTxVector (WifiRemoteStation *st)
 {
   NS_LOG_FUNCTION (this << st);
   AmrrWifiRemoteStation *station = (AmrrWifiRemoteStation *)st;
-  uint16_t channelWidth = GetChannelWidth (station);
+  uint8_t channelWidth = GetChannelWidth (station);
   if (channelWidth > 20 && channelWidth != 22)
     {
       //avoid to use legacy rate adaptation algorithms for IEEE 802.11n/ac

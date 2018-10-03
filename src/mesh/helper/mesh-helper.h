@@ -23,16 +23,12 @@
 #ifndef MESH_HELPER_H
 #define MESH_HELPER_H
 
+#include "ns3/wifi-helper.h"
 #include "ns3/mesh-stack-installer.h"
-#include "ns3/wifi-phy-standard.h"
-#include "ns3/object-factory.h"
 
 namespace ns3 {
 
-class NetDeviceContainer;
-class WifiPhyHelper;
-class WifiNetDevice;
-class NodeContainer;
+class WifiChannel;
 
 /** 
  * \ingroup dot11s

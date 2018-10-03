@@ -90,9 +90,9 @@ Synchronizer::GetDrift (uint64_t ts)
 
   if (tDrift < 0) 
     {
-      return -static_cast<int64_t> (NanosecondToTimeStep (-tDrift));
+      return -NanosecondToTimeStep (-tDrift);
     } else {
-      return static_cast<int64_t> (NanosecondToTimeStep (tDrift));
+      return NanosecondToTimeStep (tDrift);
     }
 }
 

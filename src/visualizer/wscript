@@ -2,16 +2,10 @@
 from waflib import Options
 
 required_python_modules = [
-    'gi',
-    'gi.repository.GObject',
-    'cairo',
+    'gtk',
+    'goocanvas',
     'pygraphviz',
-    'gi.repository.Gtk',
-    'gi.repository.Gdk',
-    'gi.repository.Pango',
-    'gi.repository.GooCanvas',
-]
-
+    ]
 
 def configure(conf):
     # If Python was explicitly disabled, then add this module to the
@@ -52,6 +46,7 @@ def build(bld):
     if not bld.env['ENABLE_PYVIZ']:
         return
 
+
     headers.source = []
 
     # XXX This file was added so that static builds would work on
@@ -79,6 +74,7 @@ def build(bld):
     vissrc = [
         'visualizer/base.py',
         'visualizer/core.py',
+        'visualizer/higcontainer.py',
         'visualizer/hud.py',
         'visualizer/__init__.py',
         'visualizer/svgitem.py',

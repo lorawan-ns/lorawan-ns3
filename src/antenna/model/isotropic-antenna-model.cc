@@ -20,11 +20,9 @@
 
 
 #include <ns3/log.h>
-#include <ns3/double.h>
 
 #include "antenna-model.h"
 #include "isotropic-antenna-model.h"
-
 
 
 namespace ns3 {
@@ -41,11 +39,6 @@ IsotropicAntennaModel::GetTypeId ()
     .SetParent<AntennaModel> ()
     .SetGroupName("Antenna")
     .AddConstructor<IsotropicAntennaModel> ()
-    .AddAttribute ("Gain",
-                   "The gain of the antenna in dB",
-                   DoubleValue (0),
-                   MakeDoubleAccessor (&IsotropicAntennaModel::m_gainDb),
-                   MakeDoubleChecker<double> ())
   ;
   return tid;
 }
@@ -59,7 +52,7 @@ double
 IsotropicAntennaModel::GetGainDb (Angles a)
 {
   NS_LOG_FUNCTION (this << a);
-  return m_gainDb;
+  return 0.0;
 }
 
 }

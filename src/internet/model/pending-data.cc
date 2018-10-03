@@ -247,4 +247,4 @@ PendingData::RemoveToSeq (const SequenceNumber32& seqFront, const SequenceNumber
   return current;
 }
 
-} //namespace ns3
+} //namepsace ns3

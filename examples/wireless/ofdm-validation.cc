@@ -23,21 +23,18 @@
 // It outputs plots of the Frame Success Rate versus the Signal-to-noise ratio for
 // both NIST and YANS error rate models and for every OFDM mode.
 
-#include <fstream>
-#include <cmath>
-#include "ns3/gnuplot.h"
-#include "ns3/command-line.h"
+#include "ns3/core-module.h"
 #include "ns3/yans-error-rate-model.h"
 #include "ns3/nist-error-rate-model.h"
-#include "ns3/wifi-tx-vector.h"
+#include "ns3/gnuplot.h"
 
 using namespace ns3;
 
 int main (int argc, char *argv[])
 {
   uint32_t FrameSize = 1500; //bytes
-  std::ofstream yansfile ("yans-frame-success-rate-ofdm.plt");
-  std::ofstream nistfile ("nist-frame-success-rate-ofdm.plt");
+  std::ofstream yansfile ("yans-frame-success-rate.plt");
+  std::ofstream nistfile ("nist-frame-success-rate.plt");
   std::vector <std::string> modes;
 
   modes.push_back ("OfdmRate6Mbps");
@@ -53,8 +50,8 @@ int main (int argc, char *argv[])
   cmd.AddValue ("FrameSize", "The frame size in bytes", FrameSize);
   cmd.Parse (argc, argv);
 
-  Gnuplot yansplot = Gnuplot ("yans-frame-success-rate-ofdm.eps");
-  Gnuplot nistplot = Gnuplot ("nist-frame-success-rate-ofdm.eps");
+  Gnuplot yansplot = Gnuplot ("yans-frame-success-rate.eps");
+  Gnuplot nistplot = Gnuplot ("nist-frame-success-rate.eps");
 
   Ptr <YansErrorRateModel> yans = CreateObject<YansErrorRateModel> ();
   Ptr <NistErrorRateModel> nist = CreateObject<NistErrorRateModel> ();
@@ -70,18 +67,17 @@ int main (int argc, char *argv[])
       for (double snr = -5.0; snr <= 30.0; snr += 0.1)
         {
           double ps = yans->GetChunkSuccessRate (WifiMode (modes[i]), txVector, std::pow (10.0,snr / 10.0), FrameSize * 8);
-          if (ps < 0.0 || ps > 1.0)
-            {
-              //error
-              exit (1);
-            }
           yansdataset.Add (snr, ps);
-
-          ps = nist->GetChunkSuccessRate (WifiMode (modes[i]), txVector, std::pow (10.0,snr / 10.0), FrameSize * 8);
-          if (ps < 0.0 || ps > 1.0)
+          if (ps < 0 || ps > 1)
             {
               //error
-              exit (1);
+              return 0;
+            }
+          ps = nist->GetChunkSuccessRate (WifiMode (modes[i]), txVector, std::pow (10.0,snr / 10.0), FrameSize * 8);
+          if (ps < 0 || ps > 1)
+            {
+              //error
+              return 0;
             }
           nistdataset.Add (snr, ps);
         }

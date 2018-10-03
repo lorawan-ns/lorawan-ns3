@@ -30,6 +30,7 @@
  * US Department of Defense (DoD), and ITTC at The University of Kansas.
  */
 
+#include "dsr-rcache.h"
 #include <map>
 #include <cmath>
 #include <algorithm>
@@ -38,14 +39,13 @@
 #include <vector>
 #include <functional>
 #include <iomanip>
+
 #include "ns3/simulator.h"
 #include "ns3/ipv4-route.h"
 #include "ns3/socket.h"
 #include "ns3/log.h"
 #include "ns3/address-utils.h"
 #include "ns3/packet.h"
-#include "ns3/wifi-mac-header.h"
-#include "dsr-rcache.h"
 
 namespace ns3 {
 
@@ -404,7 +404,7 @@ DsrRouteCache::RebuildBestRouteTable (Ipv4Address source)
   m_bestRoutesTable_link.clear ();
   for (std::map<Ipv4Address, Ipv4Address>::iterator i = pre.begin (); i != pre.end (); ++i)
     {
-      // loop for all vertices
+      // loop for all vertexes
       DsrRouteCacheEntry::IP_VECTOR route;
       Ipv4Address iptemp = i->first;
 

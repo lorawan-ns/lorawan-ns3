@@ -144,7 +144,7 @@ public:
  * \ingroup internet-test
  * \ingroup tests
  *
- * \brief IPv6 extensions Test: Option with alignment.
+ * \brief IPv6 extensions Test: Option with alignement.
  */
 class OptionWithAlignmentHeader : public Ipv6OptionHeader
 {
@@ -174,7 +174,7 @@ public:
  * \ingroup internet-test
  * \ingroup tests
  *
- * \brief IPv6 extensions Test: Test the option with alignment.
+ * \brief IPv6 extensions Test: Test the option with alignement.
  */
 class TestOptionWithAlignment : public TestCase
 {
