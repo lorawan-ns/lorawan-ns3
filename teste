@@ -1,0 +1,14 @@
+Waf: Entering directory `/home/nagib/opt/ns-3-dev/build'
+Waf: Leaving directory `/home/nagib/opt/ns-3-dev/build'
+Build commands will be stored in build/compile_commands.json
+'build' finished successfully (1.225s)
+10000 :nDevices
+16.6667 :double(nDevices)/simulationTime
+0.5547 :double(received)/nDevices
+0.2544 :double(interfered)/nDevices
+0.1909 :double(noMoreReceivers)/nDevices
+0 :double(underSensitivity)/nDevices
+0.5547 :double(received)/(nDevices - underSensitivity)
+0.2544 :double(interfered)/(nDevices - underSensitivity)
+0.1909 :double(noMoreReceivers)/(nDevices - underSensitivity)
+
