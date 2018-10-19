@@ -74,7 +74,7 @@ EndDeviceLoraPhy::~EndDeviceLoraPhy ()
 // {SF7, SF8, SF9, SF10, SF11, SF12}
 // These sensitivites are for a bandwidth of 125000 Hz
 const double EndDeviceLoraPhy::sensitivity[6] =
-{-127, -130, -133, -135, -137, -139};
+{-130, -132.5, -135, -137.5, -140, -142.5};
 
 void
 EndDeviceLoraPhy::SetSpreadingFactor (uint8_t sf)

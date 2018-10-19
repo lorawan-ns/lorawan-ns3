@@ -131,7 +131,7 @@ GatewayLoraPhy::~GatewayLoraPhy ()
 // Uplink sensitivity (Source: SX1301 datasheet)
 // {SF7, SF8, SF9, SF10, SF11, SF12}
 const double GatewayLoraPhy::sensitivity[6] =
-{-132.0, -134.5, -137.0, -139.5, -142.0, -144.5};
+{-130, -132.5, -135, -137.5, -140, -142.5}; 
 
 void
 GatewayLoraPhy::AddReceptionPath (double frequencyMHz)
