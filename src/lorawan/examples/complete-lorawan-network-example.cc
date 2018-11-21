@@ -48,10 +48,10 @@ using namespace ns3;
 
 NS_LOG_COMPONENT_DEFINE ("ComplexLorawanNetworkExample");
 
-int nDevices = 9000; ///<Quantidade de Devices
+int nDevices = 10000; ///<Quantidade de Devices
 int gatewayRings = 1;
-int nGateways = 1; ///< Numero de Gateways
-double radius = 2000; ///<Raio de Alcance
+int nGateways = 5; ///< Numero de Gateways
+double radius = 20000; ///<Raio de Alcance
 double gatewayRadius = 6000/((gatewayRings-1)*2+1);
 double simulationTime = 1200;
 int appPeriodSeconds = 300;
@@ -397,9 +397,9 @@ int main (int argc, char *argv[])
 	// Mobility
 	MobilityHelper mobility;
 	mobility.SetPositionAllocator ("ns3::UniformDiscPositionAllocator",
-																 "rho", DoubleValue (radius),
-																 "X", DoubleValue (0.0),
-																 "Y", DoubleValue (0.0));
+						"rho", DoubleValue (radius),
+						"X", DoubleValue (0.0),
+						"Y", DoubleValue (0.0));
 	mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
 
 	/************************
@@ -479,9 +479,48 @@ int main (int argc, char *argv[])
 	gateways.Create (nGateways);
 
 	Ptr<ListPositionAllocator> allocator = CreateObject<ListPositionAllocator> ();
-	allocator->Add (Vector (0.0, 0.0, 0.0));
-	mobility.SetPositionAllocator (allocator);
+	//mobility.SetPositionAllocator ("ns3::RandomRectanglePositionAllocator",
+        //                               "X", DoubleValue (17000),
+        //                                "Y", DoubleValue (5000));
+	//mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
+
+	if(nGateways == 1){
+		allocator->Add(Vector(0.0,0.0,0.0));
+		mobility.SetPositionAllocator(allocator);
+	}else if(nGateways == 2){
+	
+	allocator->Add (Vector (radius/2, 0.0, 0.0));
+		allocator->Add (Vector (-radius/2,0.0,0.0));
+		mobility.SetPositionAllocator (allocator);
+	
+	}else if(nGateways == 3){
+		allocator->Add (Vector (0.0, radius/2, 0.0));
+		allocator->Add (Vector (-radius/2.22,-radius/3.33 , 0.0));
+                allocator->Add (Vector (radius/2.22,-radius/3.33,0.0));
+                mobility.SetPositionAllocator (allocator);
+	}else if(nGateways == 4){
+		allocator->Add (Vector (0.0, -radius/2, 0.0));
+                allocator->Add (Vector (0.0, radius/2, 0.0));
+                allocator->Add (Vector (radius/2,0.0 , 0.0));
+                allocator->Add (Vector (-radius/2,0.0,0.0));
+                mobility.SetPositionAllocator (allocator);
+        }else if(nGateways == 5){
+		allocator->Add (Vector (0.0, 0.0, 0.0));
+                allocator->Add (Vector (0.0, -radius/2, 0.0));
+                allocator->Add (Vector (0.0, radius/2, 0.0));
+                allocator->Add (Vector (radius/2,0.0 , 0.0));
+                allocator->Add (Vector (-radius/2,0.0,0.0));
+                mobility.SetPositionAllocator (allocator);
+	}
+
+		
+        //mobility.SetPositionAllocator ("ns3::UniformDiscPositionAllocator",
+        //                               "rho", DoubleValue (radius/2),
+	//			       "X", DoubleValue (0.0),
+        //   		               "Y", DoubleValue (0.0));
+        //mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
 	mobility.Install (gateways);
+
 
 	// Make it so that nodes are at a certain height > 0
 	for (NodeContainer::Iterator j = gateways.Begin ();
